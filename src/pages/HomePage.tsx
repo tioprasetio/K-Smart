@@ -73,6 +73,7 @@ const HomePage = () => {
               {NEW_PRODUCTS.map((product) => {
                 return (
                   <CardProduct
+                    id={product.id}
                     // Kalo product.name dihapus baru akan memunculkan Unknown
                     name={product.name}
                     picture={product.picture}

@@ -12,6 +12,9 @@ const ProductDetailPage = () => {
   const [product, setProduct] = useState<Product | null>(null);
 
   useEffect(() => {
+    if (!productSlug) {
+      return;
+    }
     const product = ALL_PRODUCTS.find((product) => product.id === +productSlug);
 
     console.log(product);
