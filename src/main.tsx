@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router";
 import "./index.css";
 import App from "./App.tsx";
-import "flowbite/dist/flowbite.min.js";
+import "flowbite";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
