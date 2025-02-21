@@ -1,29 +1,12 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import Chatbot from "../components/Chatbot";
+import { useLocation } from "react-router-dom";
 import NavbarComponent from "../components/Navbar";
-import { ALL_PRODUCTS, Product } from "../data/products";
+import Chatbot from "../components/Chatbot";
 
 const ProductDetailPage = () => {
-  const { productSlug } = useParams<{ productSlug: string }>();
-  // const location = useLocation();
-  console.log(productSlug);
+  // const params = useParams<{ productSlug: string }>();
+  const location = useLocation();
 
-  const [product, setProduct] = useState<Product | null>(null);
-
-  useEffect(() => {
-    if (!productSlug) {
-      return;
-    }
-    const product = ALL_PRODUCTS.find((product) => product.id === +productSlug);
-
-    console.log(product);
-
-    if (product) {
-      setProduct(product);
-    }
-  }, [productSlug]);
-
+  const product = location.state;
   return (
     <>
       <NavbarComponent />

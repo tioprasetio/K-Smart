@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import Btn from "./Btn";
 
 type CardProductProps = {
-  id: number;
   name?: string;
   harga: number;
   picture?: string;
@@ -27,9 +26,8 @@ const CardProduct = (props: CardProductProps) => {
     pemesananMin,
     deskripsi,
     category,
-    id,
   } = props;
-
+  const productSlug = name.toLowerCase().replace(/\s+/g, "-");
   return (
     <>
       {/* <!-- Card Produk 1 --> */}
@@ -81,7 +79,7 @@ const CardProduct = (props: CardProductProps) => {
 
           {/* <!-- Button Masukkan Keranjang --> */}
           <Link
-            to={`/product/${id}`}
+            to={`/product/${productSlug}`}
             state={{
               name,
               harga,

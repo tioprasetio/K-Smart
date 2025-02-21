@@ -12,8 +12,6 @@ const AllProducts = () => {
     product.name.toLowerCase().includes(keyword.toLowerCase())
   );
 
-  console.log(filteredProducts);
-
   return (
     <>
       <NavbarComponent />
@@ -44,7 +42,6 @@ const AllProducts = () => {
                     deskripsi={product.deskripsi}
                     category={product.category}
                     key={product.id}
-                    id={product.id}
                   />
                 ))}
               </>

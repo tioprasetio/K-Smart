@@ -50,7 +50,6 @@ const HomePage = () => {
                     deskripsi={product.deskripsi}
                     category={product.category}
                     key={product.id}
-                    id={product.id}
                   />
                 );
               })}
@@ -73,7 +72,6 @@ const HomePage = () => {
               {NEW_PRODUCTS.map((product) => {
                 return (
                   <CardProduct
-                    id={product.id}
                     // Kalo product.name dihapus baru akan memunculkan Unknown
                     name={product.name}
                     picture={product.picture}

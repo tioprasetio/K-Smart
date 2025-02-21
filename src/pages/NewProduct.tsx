@@ -32,7 +32,6 @@ const NewProduct = () => {
                 deskripsi={product.deskripsi}
                 category={product.deskripsi}
                 key={product.id}
-                id={product.id}
               />
             ))}
           </div>
