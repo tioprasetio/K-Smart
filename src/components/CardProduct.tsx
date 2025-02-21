@@ -44,7 +44,7 @@ const CardProduct = (props: CardProductProps) => {
           </h3>
 
           {/* <!-- Harga --> */}
-          <div className="flex flex-row w-full mt-2 text-sm">
+          <div className="flex items-center flex-row w-full mt-2 text-sm">
             <div className="flex flex-col text-left gap-1">
               <div className="flex flex-row items-center">
                 <span className="text-[#353535] text-base font-bold">
@@ -55,23 +55,23 @@ const CardProduct = (props: CardProductProps) => {
 
               {terjual ? (
                 <div className="flex flex-row items-center">
-                  <span className="text-[#959595] text-lg">
-                    <i className="bx bxs-star text-xl text-[#FFD52DFF]"></i>{" "}
+                  <span className="text-[#959595] text-sm">
+                    <i className="bx bxs-star text-sm text-[#FFD52DFF]"></i>{" "}
                     {rate}
                   </span>
-                  <span className="text-[#959595] text-lg px-1">|</span>
-                  <span className="text-[#959595] text-lg">
+                  <span className="text-[#959595] text-sm px-1">|</span>
+                  <span className="text-[#959595] text-sm">
                     Terjual {terjual}
                   </span>
                 </div>
               ) : (
                 <div className="flex flex-row items-center">
-                  <span className="text-[#959595] text-lg">
+                  <span className="text-[#959595] text-sm">
                     <i className="bx bxs-star text-xl text-[#FFD52DFF]"></i>{" "}
                     {rate}
                   </span>
                   <span className="text-[#959595] text-lg px-1">|</span>
-                  <span className="text-[#959595] text-lg">Terjual -</span>
+                  <span className="text-[#959595] text-sm">Terjual -</span>
                 </div>
               )}
             </div>

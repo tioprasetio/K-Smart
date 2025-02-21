@@ -62,13 +62,13 @@ const ProductDetailPage = () => {
                     <section className="bg-white p-6 mb-3 xl:mb-4">
                       <h2 className="h3 pb-2">Jaminan Mutu</h2>
                       <div className="pt-4 flex items-center">
-                        <i className="text-xl bx bx-check-circle bg-[#28a154]"></i>
+                        <i className="text-xl bx bx-check-circle text-[#28a154]"></i>
                         <div>100% Produk Original</div>
                         <button
                           type="button"
                           className="ml-auto text-xl text-primary"
                         >
-                          <i className="text-xl bx bx-info-circle bg-[#28a154]"></i>
+                          <i className="text-xl bx bx-info-circle text-[#28a154]"></i>
                         </button>
                       </div>
                     </section>
@@ -85,12 +85,11 @@ const ProductDetailPage = () => {
                       </h1>
                       <div className="flex flex-row items-center">
                         <span className="text-[#959595] text-lg">
-                          <i className="bx bxs-star text-xl text-[#FFD52DFF]"></i>
+                          <i className="bx bxs-star text-lg text-[#FFD52DFF]"></i>
                           {product.rate}
                         </span>
                         <span className="text-[#959595] text-lg px-1">|</span>
-                        <span className="text-[#959595] text-lg">
-                          {product.terjual}
+                        <span className="text-[#959595] text-lg">Terjual {product.terjual}
                         </span>
                       </div>
 
@@ -285,13 +284,13 @@ const ProductDetailPage = () => {
                       <section className="bg-white p-6 mb-3 xl:mb-4">
                         <h2 className="h3 pb-2">Jaminan Mutu</h2>
                         <div className="pt-4 flex items-center">
-                          <i className="text-xl bx bx-check-circle bg-[#28a154]"></i>
+                          <i className="text-xl bx bx-check-circle text-[#28a154]"></i>
                           <div>100% Produk Original</div>
                           <button
                             type="button"
                             className="ml-auto text-xl text-primary"
                           >
-                            <i className="text-xl bx bx-info-circle bg-[#28a154]"></i>
+                            <i className="text-xl bx bx-info-circle text-[#28a154]"></i>
                           </button>
                         </div>
                       </section>
