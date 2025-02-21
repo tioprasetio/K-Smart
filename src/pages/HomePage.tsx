@@ -50,6 +50,7 @@ const HomePage = () => {
                     deskripsi={product.deskripsi}
                     category={product.category}
                     key={product.id}
+                    id={product.id}
                   />
                 );
               })}

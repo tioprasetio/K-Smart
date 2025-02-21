@@ -21,6 +21,7 @@ const BestSellersPage = () => {
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {BEST_SELLERS.map((product) => (
               <CardProduct
+                id={product.id}
                 name={product.name}
                 picture={product.picture}
                 harga={product.harga}

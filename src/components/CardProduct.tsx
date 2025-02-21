@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import Btn from "./Btn";
 
 type CardProductProps = {
+  id: number;
   name?: string;
   harga: number;
   picture?: string;
@@ -26,7 +27,10 @@ const CardProduct = (props: CardProductProps) => {
     pemesananMin,
     deskripsi,
     category,
+    id,
   } = props;
+  console.log("ID DARI CARD PRODUCT", id);
+
   const productSlug = name.toLowerCase().replace(/\s+/g, "-");
   return (
     <>
@@ -78,25 +82,23 @@ const CardProduct = (props: CardProductProps) => {
           </div>
 
           {/* <!-- Button Masukkan Keranjang --> */}
-          <Btn>
-            <Link
-              to={`/product/${productSlug}`}
-              state={{
-                name,
-                harga,
-                picture,
-                rate,
-                terjual,
-                beratPengiriman,
-                beratBersih,
-                pemesananMin,
-                deskripsi,
-                category,
-              }}
-            >
-              Lihat
-            </Link>
-          </Btn>
+          <Link
+            to={`/product/${id}`}
+            state={{
+              name,
+              harga,
+              picture,
+              rate,
+              terjual,
+              beratPengiriman,
+              beratBersih,
+              pemesananMin,
+              deskripsi,
+              category,
+            }}
+          >
+            <Btn>Lihat</Btn>
+          </Link>
         </div>
       </div>
       {/* <!-- End Card Produk --> */}
