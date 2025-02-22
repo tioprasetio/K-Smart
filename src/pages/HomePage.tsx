@@ -8,7 +8,7 @@ import Footer from "../components/Footer";
 import Copyright from "../components/Copyright";
 import Payment from "../components/Payment";
 import { useEffect, useState } from "react";
-import { getProduct } from "../api/product/getProduct";
+import { getBestSellers, getProduct } from "../api/product/getProduct";
 
 // interface Product {
 //   id: string;
@@ -18,17 +18,21 @@ import { getProduct } from "../api/product/getProduct";
 
 const HomePage = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [bestSellers, setBestSellers] = useState<Product[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getProduct();
-        console.log("data=", data);
-        setProducts(data);
+        const allProducts = await getProduct();
+        const topProducts = await getBestSellers();
 
-        // setUsers(data);
+        // console.log("All Products:", allProducts);
+        // console.log("Best Sellers:", topProducts);
+
+        setProducts(allProducts);
+        setBestSellers(topProducts);
       } catch (error) {
-        console.error(error);
+        console.error("Error fetching data:", error);
       }
     };
 
@@ -55,67 +59,37 @@ const HomePage = () => {
               <h2 className="text-xl text-[#353535] font-bold">Paling Laris</h2>
               <button type="button" className="cursor-pointer">
                 <span className="text-xl text-[#28a154] font-medium">
-                  <Link to="/BestSellers">Lihat Semua</Link>
+                  <Link to="/best-sellers">Lihat Semua</Link>
                 </span>
               </button>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {/* BEST_SELLERS.slice(0, 2) untuk menampilkan 2 produk */}
-              {products.map((product) => {
-                return (
-                  <CardProduct
-                    // Kalo product.name dihapus baru akan memunculkan Unknown
-                    name={product.name}
-                    picture={product.picture}
-                    harga={product.harga}
-                    rate={product.rate}
-                    terjual={product.terjual}
-                    beratPengiriman={product.beratPengiriman}
-                    beratBersih={product.beratBersih}
-                    pemesananMin={product.pemesananMin}
-                    deskripsi={product.deskripsi}
-                    category={product.category}
-                    key={product.id}
-                  />
-                );
-              })}
+              {/* bestSellers.slice(0, 2) untuk menampilkan 2 produk */}
+              {bestSellers.map((product) => (
+                <CardProduct key={product.id} {...product} />
+              ))}
             </div>
           </div>
         </div>
 
-        {/* Produk Baru */}
-        {/* <div className="bg-[#f4f6f9] w-full mt-8">
+        {/* Semua Produk */}
+        <div className="bg-[#f4f6f9] w-full mt-8">
           <div className="mx-auto">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl text-[#353535] font-bold">Produk Baru</h2>
+              <h2 className="text-xl text-[#353535] font-bold">Semua Produk</h2>
               <button type="button" className="cursor-pointer">
                 <span className="text-xl text-[#28a154] font-medium">
-                  <Link to="/NewProducts">Lihat Semua</Link>
+                  <Link to="/all-product">Lihat Semua</Link>
                 </span>
               </button>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {products.map((product) => {
-                return (
-                  <CardProduct
-                    // Kalo product.name dihapus baru akan memunculkan Unknown
-                    name={product.name}
-                    picture={product.picture}
-                    harga={product.harga}
-                    rate={product.rate}
-                    terjual={product.terjual}
-                    beratPengiriman={product.beratPengiriman}
-                    beratBersih={product.beratBersih}
-                    pemesananMin={product.pemesananMin}
-                    deskripsi={product.deskripsi}
-                    category={product.category}
-                    key={product.id}
-                  />
-                );
-              })}
+              {products.slice(0, 4).map((product) => (
+                <CardProduct key={product.id} {...product} />
+              ))}
             </div>
           </div>
-        </div> */}
+        </div>
 
         <Payment />
       </div>

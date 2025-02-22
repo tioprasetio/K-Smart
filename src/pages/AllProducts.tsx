@@ -1,58 +1,51 @@
-// import { Link, useLocation } from "react-router-dom";
-// import { ALL_PRODUCTS } from "../data/products";
-// import CardProduct from "../components/CardProduct";
-// import NavbarComponent from "../components/Navbar";
+import { Link } from "react-router";
+import CardProduct from "../components/CardProduct";
+import NavbarComponent from "../components/Navbar";
+import { Product } from "../data/products"; // Pastikan path sesuai
+import { useEffect, useState } from "react";
+import { getProduct } from "../api/product/getProduct";
 
-// const AllProducts = () => {
-//   const location = useLocation();
-//   const searchParams = new URLSearchParams(location.search);
-//   const keyword = searchParams.get("keyword") || "";
+const AllProduct = () => {
+  const [products, setProducts] = useState<Product[]>([]);
 
-//   const filteredProducts = ALL_PRODUCTS.filter((product) =>
-//     product.name.toLowerCase().includes(keyword.toLowerCase())
-//   );
+  useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const allProducts = await getProduct();
+  
+        //   console.log("All Products:", allProducts);
+  
+          setProducts(allProducts);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
+  
+      fetchData();
+    }, []);
+  return (
+    <>
+      <NavbarComponent />
+      <div className="bg-[#f4f6f9] overflow-x-hidden w-full min-h-screen pt-16 sm:pt-24">
+        <div className="text-[#353535] text-xl font-medium bg-[#f4f6f9] p-6">
+          <span>
+            <Link className="text-[#28a154]" to="/">
+              Home
+            </Link>{" "}
+            / Semua Produk
+          </span>
+        </div>
 
-//   return (
-//     <>
-//       <NavbarComponent />
-//       <div className="bg-[#f4f6f9] overflow-x-hidden w-full min-h-screen pt-16 sm:pt-24">
-//         <div className="text-[#353535] text-xl font-medium bg-[#f4f6f9] p-6">
-//           <span>
-//             <Link className="text-[#28a154]" to="/">
-//               Home
-//             </Link>{" "}
-//             / Hasil Pencarian: "{keyword}"
-//           </span>
-//         </div>
+        <div className="bg-[#f4f6f9] p-6 w-full">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {products.map((product) => (
+              <CardProduct key={product.id} {...product} />
+            ))}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
 
-//         <div className="bg-[#f4f6f9] p-6 w-full">
-//           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-//             {filteredProducts.length > 0 ? (
-//               <>
-//                 {filteredProducts.map((product) => (
-//                   <CardProduct
-//                     name={product.name}
-//                     picture={product.picture}
-//                     harga={product.harga}
-//                     rate={product.rate}
-//                     terjual={product.terjual}
-//                     beratPengiriman={product.beratPengiriman}
-//                     beratBersih={product.beratBersih}
-//                     pemesananMin={product.pemesananMin}
-//                     deskripsi={product.deskripsi}
-//                     category={product.category}
-//                     key={product.id}
-//                   />
-//                 ))}
-//               </>
-//             ) : (
-//               <p>Maaf, Produk tidak ditemukan.</p>
-//             )}
-//           </div>
-//         </div>
-//       </div>
-//     </>
-//   );
-// };
-
-// export default AllProducts;
+export default AllProduct;

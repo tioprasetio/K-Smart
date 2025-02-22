@@ -5,6 +5,7 @@ import ProductDetailPage from "./pages/ProductDetailPage";
 import BestSellersPage from "./pages/BestSellerPage";
 // import NewProduct from "./pages/NewProduct";
 import CategoryPage from "./pages/CategoryPage";
+import AllProduct from "./pages/AllProducts";
 // import AllProducts from "./pages/AllProducts";
 
 function App() {
@@ -13,9 +14,9 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
 
-        <Route path="/BestSellers" element={<BestSellersPage />} />
+        <Route path="/best-sellers" element={<BestSellersPage />} />
 
-        {/* <Route path="/product-unggulan" element={<UnggulanPage />} /> */}
+        <Route path="/all-product" element={<AllProduct />} />
 
         <Route path="/category/:category" element={<CategoryPage />} />
 

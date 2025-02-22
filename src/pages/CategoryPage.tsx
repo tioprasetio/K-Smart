@@ -16,15 +16,15 @@ const CategoryPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getProduct();
-        console.log("All products:", data);
+        const allProduct = await getProduct();
+        // console.log("All products:", allProduct);
 
         // Filter berdasarkan kategori
-        const filteredProducts = data.filter(
+        const filteredProducts = allProduct.filter(
           (product: Product) => product.category === decodedCategory
         );
 
-        console.log("Filtered products:", filteredProducts);
+        // console.log("Filtered products:", filteredProducts);
         setProducts(filteredProducts);
       } catch (error) {
         console.error(error);

@@ -3,26 +3,25 @@ import CardProduct from "../components/CardProduct";
 import NavbarComponent from "../components/Navbar";
 import { Product } from "../data/products"; // Pastikan path sesuai
 import { useEffect, useState } from "react";
-import { getProduct } from "../api/product/getProduct";
+import { getBestSellers } from "../api/product/getProduct";
 
 const BestSellersPage = () => {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [bestSellers, setBestSellers] = useState<Product[]>([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getProduct();
-        console.log("data=", data);
-        setProducts(data);
+      const fetchData = async () => {
+        try {
+          const topProducts = await getBestSellers();
+          // console.log("Best Sellers:", topProducts);
 
-        // setUsers(data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchData();
-  }, []);
+          setBestSellers(topProducts);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
+  
+      fetchData();
+    }, []);
   return (
     <>
       <NavbarComponent />
@@ -38,20 +37,8 @@ const BestSellersPage = () => {
 
         <div className="bg-[#f4f6f9] p-6 w-full">
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {products.map((product) => (
-              <CardProduct
-                name={product.name}
-                picture={product.picture}
-                harga={product.harga}
-                rate={product.rate}
-                terjual={product.terjual}
-                beratPengiriman={product.beratPengiriman}
-                beratBersih={product.beratBersih}
-                pemesananMin={product.pemesananMin}
-                deskripsi={product.deskripsi}
-                category={product.category}
-                key={product.id}
-              />
+            {bestSellers.map((product) => (
+              <CardProduct key={product.id} {...product} />
             ))}
           </div>
         </div>
