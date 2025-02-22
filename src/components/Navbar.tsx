@@ -2,7 +2,7 @@ import "flowbite/dist/flowbite.min.js";
 import { Link } from "react-router";
 import { useEffect } from "react";
 import "flowbite";
-import SearchBar from "./SearchBar";
+// import SearchBar from "./SearchBar";
 
 const NavbarComponent = () => {
   useEffect(() => {
@@ -81,7 +81,7 @@ const NavbarComponent = () => {
 
             <li>
               <div className="py-2 px-3 bg-white rounded-sm">
-                <SearchBar />
+                {/* <SearchBar /> */}
               </div>
             </li>
           </ul>

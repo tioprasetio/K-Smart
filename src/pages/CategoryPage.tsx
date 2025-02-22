@@ -1,12 +1,38 @@
 import { Link, useParams } from "react-router-dom";
-import { getProductsByCategory } from "../data/products";
+// import { getProductsByCategory } from "../data/products";
 import CardProduct from "../components/CardProduct";
 import NavbarComponent from "../components/Navbar";
+import { Product } from "../data/products";
+import { useEffect, useState } from "react";
+import { getProduct } from "../api/product/getProduct";
 
 const CategoryPage = () => {
   const { category } = useParams(); // Ambil kategori dari URL
   const decodedCategory = decodeURIComponent(category || ""); // Dekode jika ada spasi
-  const products = getProductsByCategory(decodedCategory); // Ambil produk sesuai kategori
+  // const products = getProductsByCategory(decodedCategory); // Ambil produk sesuai kategori
+
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getProduct();
+        console.log("All products:", data);
+
+        // Filter berdasarkan kategori
+        const filteredProducts = data.filter(
+          (product: Product) => product.category === decodedCategory
+        );
+
+        console.log("Filtered products:", filteredProducts);
+        setProducts(filteredProducts);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
+  }, [decodedCategory]); // Tambahkan `decodedCategory` agar re-fetch jika kategori berubah
 
   return (
     <>
@@ -24,7 +50,7 @@ const CategoryPage = () => {
         <div className="bg-[#f4f6f9] p-6 w-full">
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {products.length > 0 ? (
-              products.map((product, index) => (
+              products.map((product: Product, index: number) => (
                 <CardProduct key={index} {...product} />
               ))
             ) : (

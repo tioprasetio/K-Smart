@@ -27,7 +27,9 @@ const CardProduct = (props: CardProductProps) => {
     deskripsi,
     category,
   } = props;
-  const productSlug = name.toLowerCase().replace(/\s+/g, "-");
+  console.log('card product=',name);
+  
+  const productSlug = name?.toLowerCase().replace(/\s+/g, "-");
   return (
     <>
       {/* <!-- Card Produk 1 --> */}

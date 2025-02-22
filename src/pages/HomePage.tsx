@@ -3,12 +3,37 @@ import Banner from "../components/Banner";
 import CardProduct from "../components/CardProduct";
 import Category from "../components/Category";
 import NavbarComponent from "../components/Navbar";
-import { BEST_SELLERS, NEW_PRODUCTS } from "../data/products";
+import { Product } from "../data/products";
 import Footer from "../components/Footer";
 import Copyright from "../components/Copyright";
 import Payment from "../components/Payment";
+import { useEffect, useState } from "react";
+import { getProduct } from "../api/product/getProduct";
+
+// interface Product {
+//   id: string;
+//   name: { stringValue: string };
+//   email: { stringValue: string };
+// }
 
 const HomePage = () => {
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getProduct();
+        console.log("data=", data);
+        setProducts(data);
+
+        // setUsers(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
+  }, []);
   return (
     <div className="bg-[#f4f6f9] pt-16 sm:pt-24 overflow-x-hidden w-full min-h-screen">
       <NavbarComponent />
@@ -36,7 +61,7 @@ const HomePage = () => {
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {/* BEST_SELLERS.slice(0, 2) untuk menampilkan 2 produk */}
-              {BEST_SELLERS.map((product) => {
+              {products.map((product) => {
                 return (
                   <CardProduct
                     // Kalo product.name dihapus baru akan memunculkan Unknown
@@ -59,7 +84,7 @@ const HomePage = () => {
         </div>
 
         {/* Produk Baru */}
-        <div className="bg-[#f4f6f9] w-full mt-8">
+        {/* <div className="bg-[#f4f6f9] w-full mt-8">
           <div className="mx-auto">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl text-[#353535] font-bold">Produk Baru</h2>
@@ -70,7 +95,7 @@ const HomePage = () => {
               </button>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {NEW_PRODUCTS.map((product) => {
+              {products.map((product) => {
                 return (
                   <CardProduct
                     // Kalo product.name dihapus baru akan memunculkan Unknown
@@ -90,7 +115,7 @@ const HomePage = () => {
               })}
             </div>
           </div>
-        </div>
+        </div> */}
 
         <Payment />
       </div>
