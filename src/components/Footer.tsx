@@ -2,7 +2,7 @@ const Footer = () => {
   return (
     <>
       {/* <!-- Footer Info --> */}
-      <div className="bg-[#f4f4f4] p-4 w-full">
+      <div className="bg-[#f4f6f9] p-8 w-full">
         <div className="container mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4">
             {/* <!-- Footer Kontak --> */}
@@ -94,7 +94,7 @@ const Footer = () => {
             </div>
 
             {/* <!-- Footer Pembayaran --> */}
-            <div className="pb-6 py-6 pr-6">
+            {/* <div className="pb-6 py-6 pr-6">
               <h2 className="mb-4 font-bold text-xl text-[#28a154]">
                 Pembayaran
               </h2>
@@ -104,7 +104,7 @@ const Footer = () => {
                   alt=""
                 />
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

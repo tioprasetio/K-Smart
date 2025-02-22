@@ -6,6 +6,7 @@ import NavbarComponent from "../components/Navbar";
 import { BEST_SELLERS, NEW_PRODUCTS } from "../data/products";
 import Footer from "../components/Footer";
 import Copyright from "../components/Copyright";
+import Payment from "../components/Payment";
 
 const HomePage = () => {
   return (
@@ -58,7 +59,7 @@ const HomePage = () => {
         </div>
 
         {/* Produk Baru */}
-        <div className="bg-[#f4f6f9] w-full mt-5">
+        <div className="bg-[#f4f6f9] w-full mt-8">
           <div className="mx-auto">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl text-[#353535] font-bold">Produk Baru</h2>
@@ -90,6 +91,8 @@ const HomePage = () => {
             </div>
           </div>
         </div>
+
+        <Payment />
       </div>
 
       <Footer />
