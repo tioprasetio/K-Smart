@@ -26,9 +26,6 @@ const HomePage = () => {
         const allProducts = await getProduct();
         const topProducts = await getBestSellers();
 
-        // console.log("All Products:", allProducts);
-        // console.log("Best Sellers:", topProducts);
-
         setProducts(allProducts);
         setBestSellers(topProducts);
       } catch (error) {

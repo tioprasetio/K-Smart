@@ -12,7 +12,6 @@ const BestSellersPage = () => {
       const fetchData = async () => {
         try {
           const topProducts = await getBestSellers();
-          // console.log("Best Sellers:", topProducts);
 
           setBestSellers(topProducts);
         } catch (error) {

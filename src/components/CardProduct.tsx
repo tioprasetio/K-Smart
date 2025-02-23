@@ -12,6 +12,7 @@ type CardProductProps = {
   pemesananMin: number;
   deskripsi: string;
   category: string;
+  id: number;
 };
 
 const CardProduct = (props: CardProductProps) => {
@@ -26,6 +27,7 @@ const CardProduct = (props: CardProductProps) => {
     pemesananMin,
     deskripsi,
     category,
+    id,
   } = props;
   // console.log('card product=',name);
   
@@ -81,8 +83,9 @@ const CardProduct = (props: CardProductProps) => {
 
           {/* <!-- Button Masukkan Keranjang --> */}
           <Link
-            to={`/product/${productSlug}`}
+            to={`/product/${id}-${productSlug}`}
             state={{
+              id,
               name,
               harga,
               picture,

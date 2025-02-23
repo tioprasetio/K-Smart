@@ -1,28 +1,41 @@
-import { Link } from "react-router";
+import { Link, useSearchParams } from "react-router-dom"; //Perbaiki import
 import CardProduct from "../components/CardProduct";
 import NavbarComponent from "../components/Navbar";
-import { Product } from "../data/products"; // Pastikan path sesuai
+import { Product } from "../data/products";
 import { useEffect, useState } from "react";
 import { getProduct } from "../api/product/getProduct";
 
 const AllProduct = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]); //Tambahkan state filter
+
+  const [searchParams] = useSearchParams();
+  const keyword = searchParams.get("keyword"); //Ambil keyword dari URL
 
   useEffect(() => {
-      const fetchData = async () => {
-        try {
-          const allProducts = await getProduct();
-  
-        //   console.log("All Products:", allProducts);
-  
-          setProducts(allProducts);
-        } catch (error) {
-          console.error("Error fetching data:", error);
-        }
-      };
-  
-      fetchData();
-    }, []);
+    const fetchData = async () => {
+      try {
+        const allProducts = await getProduct();
+        setProducts(allProducts);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  //Tambahkan efek untuk filter produk berdasarkan keyword
+  useEffect(() => {
+    if (keyword) {
+      const filtered = products.filter((product) =>
+        product.name?.toLowerCase().includes(keyword.toLowerCase())
+      );
+      setFilteredProducts(filtered);
+    } else {
+      setFilteredProducts(products);
+    }
+  }, [keyword, products]);
+
   return (
     <>
       <NavbarComponent />
@@ -38,9 +51,15 @@ const AllProduct = () => {
 
         <div className="bg-[#f4f6f9] p-6 w-full">
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {products.map((product) => (
-              <CardProduct key={product.id} {...product} />
-            ))}
+            {filteredProducts.length > 0 ? (
+              filteredProducts.map((product) => (
+                <CardProduct key={product.id} {...product} />
+              ))
+            ) : (
+              <p className="text-center text-gray-500">
+                Produk tidak ditemukan.
+              </p>
+            )}
           </div>
         </div>
       </div>

@@ -23,7 +23,7 @@ function App() {
         {/* Dynamic Route */}
         <Route path="/product/:productSlug" element={<ProductDetailPage />} />
 
-        {/* <Route path="/products" element={<AllProducts />} /> */}
+        {/* <Route path="/search-products" element={<AllProduct />} /> */}
 
         {/* Fungsi untuk not found jika tidak ada routes */}
         <Route path="*" element={<NotFoundPage />} />
