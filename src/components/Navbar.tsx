@@ -73,11 +73,11 @@ const NavbarComponent = () => {
           className="hidden w-full md:block md:w-auto"
           id="navbar-multi-level"
         >
-          <ul className="flex md:items-center flex-wrap space-x-2 flex-col md:flex-row font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white">
+          <ul className="flex flex-col md:flex-row md:items-center w-full md:w-auto space-y-2 md:space-y-0 md:space-x-2 font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:mt-0 md:border-0 md:bg-white">
             <li>
               <Link
                 to="/"
-                className="block py-2 px-3 text-grey-300 hover:text-white hover:bg-[#28a154] bg-white rounded-sm"
+                className="block py-2 px-3 text-gray-700 hover:text-white hover:bg-[#28a154] bg-white rounded-sm"
                 aria-current="page"
               >
                 Home
@@ -87,26 +87,26 @@ const NavbarComponent = () => {
             <li>
               <Link
                 to="/"
-                className="block py-2 px-3 text-grey-300 hover:text-white hover:bg-[#28a154] bg-white rounded-sm"
+                className="block py-2 px-3 text-gray-700 hover:text-white hover:bg-[#28a154] bg-white rounded-sm"
                 aria-current="page"
               >
                 Tentang Kami
               </Link>
             </li>
 
-            <li>
+            <li className="w-full md:w-auto">
               {isLoggedIn ? (
                 <button
                   onClick={handleLogout}
-                  className="text-white cursor-pointer bg-red-500 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 text-center"
+                  className="w-full md:w-auto text-white bg-red-500 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 text-center"
                 >
                   Logout
                 </button>
               ) : (
-                <Link to="/login">
+                <Link to="/login" className="w-full md:w-auto block">
                   <button
                     type="button"
-                    className="text-white cursor-pointer bg-[#28a154] hover:bg-[#167e3c] focus:ring-4 focus:outline-none focus:ring-[#3ab065] font-medium rounded-lg text-sm px-4 py-2 text-center"
+                    className="w-full md:w-auto text-white bg-[#28a154] hover:bg-[#167e3c] focus:ring-4 focus:outline-none focus:ring-[#3ab065] font-medium rounded-lg text-sm px-4 py-2 text-center"
                   >
                     Login
                   </button>
