@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router";
 import Btn from "./Btn";
 
 type CardProductProps = {
@@ -31,7 +31,32 @@ const CardProduct = (props: CardProductProps) => {
   } = props;
   // console.log('card product=',name);
   
+  const navigate = useNavigate();
   const productSlug = name?.toLowerCase().replace(/\s+/g, "-");
+
+  const isLoggedIn = localStorage.getItem("user"); // Asumsi user tersimpan di localStorage
+
+  const handleClick = () => {
+    if (!isLoggedIn) {
+      navigate("/login"); // Redirect ke halaman login jika belum login
+    } else {
+      navigate(`/product/${id}-${productSlug}`, {
+        state: {
+          id,
+          name,
+          harga,
+          picture,
+          rate,
+          terjual,
+          beratPengiriman,
+          beratBersih,
+          pemesananMin,
+          deskripsi,
+          category,
+        },
+      });
+    }
+  };
   return (
     <>
       {/* <!-- Card Produk 1 --> */}
@@ -82,24 +107,7 @@ const CardProduct = (props: CardProductProps) => {
           </div>
 
           {/* <!-- Button Masukkan Keranjang --> */}
-          <Link
-            to={`/product/${id}-${productSlug}`}
-            state={{
-              id,
-              name,
-              harga,
-              picture,
-              rate,
-              terjual,
-              beratPengiriman,
-              beratBersih,
-              pemesananMin,
-              deskripsi,
-              category,
-            }}
-          >
-            <Btn>Lihat</Btn>
-          </Link>
+          <Btn onClick={handleClick}>Lihat</Btn>
         </div>
       </div>
       {/* <!-- End Card Produk --> */}

@@ -20,7 +20,7 @@ const Payment = () => {
   }, []); // Hanya dijalankan sekali setelah komponen dirender
 
   return (
-    <section className="container max-w-[1130px] mx-auto flex flex-col gap-4 mt-8">
+    <section className="container w-full mx-auto flex flex-col gap-4 mt-8">
       <h2 className="font-bold text-xl text-[#353535]">Pembayaran</h2>
       <div className="gradasi flex flex-col">
         <div className="logo-container">

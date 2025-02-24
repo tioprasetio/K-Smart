@@ -6,6 +6,7 @@ import BestSellersPage from "./pages/BestSellerPage";
 // import NewProduct from "./pages/NewProduct";
 import CategoryPage from "./pages/CategoryPage";
 import AllProduct from "./pages/AllProducts";
+import LoginPage from "./pages/LoginPage";
 // import AllProducts from "./pages/AllProducts";
 
 function App() {
@@ -19,6 +20,8 @@ function App() {
         <Route path="/all-product" element={<AllProduct />} />
 
         <Route path="/category/:category" element={<CategoryPage />} />
+
+        <Route path="/login" element={<LoginPage />} />
 
         {/* Dynamic Route */}
         <Route path="/product/:productSlug" element={<ProductDetailPage />} />

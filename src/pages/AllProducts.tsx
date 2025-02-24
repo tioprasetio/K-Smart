@@ -1,4 +1,4 @@
-import { Link, useSearchParams } from "react-router-dom"; //Perbaiki import
+import { Link, useSearchParams } from "react-router"; //Perbaiki import
 import CardProduct from "../components/CardProduct";
 import NavbarComponent from "../components/Navbar";
 import { Product } from "../data/products";

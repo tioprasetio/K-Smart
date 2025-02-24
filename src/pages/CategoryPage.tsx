@@ -1,5 +1,4 @@
-import { Link, useParams } from "react-router-dom";
-// import { getProductsByCategory } from "../data/products";
+import { Link, useParams } from "react-router";
 import CardProduct from "../components/CardProduct";
 import NavbarComponent from "../components/Navbar";
 import { Product } from "../data/products";

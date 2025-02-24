@@ -1,6 +1,6 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 const categories = [
   { name: "Health Accessories", image: "/assets/images/health_accessories.png" },

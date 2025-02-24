@@ -1,10 +1,25 @@
 import "flowbite/dist/flowbite.min.js";
-import { Link } from "react-router";
-import { useEffect } from "react";
+import { Link, useNavigate } from "react-router";
+import { useEffect, useState } from "react";
 import "flowbite";
-import SearchBar from "./SearchBar";
 
 const NavbarComponent = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
+
+  // Cek apakah user sudah login (ada data di localStorage)
+  useEffect(() => {
+    const user = localStorage.getItem("user");
+    setIsLoggedIn(!!user); // Jika ada user, set isLoggedIn = true
+  }, []);
+
+  // Fungsi Logout
+  const handleLogout = () => {
+    localStorage.removeItem("user"); // Hapus data user dari localStorage
+    setIsLoggedIn(false); // Ubah state menjadi logout
+    navigate("/login"); // Arahkan kembali ke halaman login
+  };
+
   useEffect(() => {
     import("flowbite").then((flowbite) => {
       if (flowbite && flowbite.initFlowbite) {
@@ -18,12 +33,12 @@ const NavbarComponent = () => {
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <Link
           to="/"
-          className="flex items-center space-x-3 rtl:space-x-reverse px-3"
+          className="flex items-center space-x-2 rtl:space-x-reverse px-3"
         >
           <img
             src="https://k-net.co.id/assets/images/logo.png"
             className="h-8"
-            alt="Flowbite Logo"
+            alt="K-Link"
           />
           <span className="text-gray-900 self-center text-2xl font-semibold whitespace-nowrap">
             K-Smart
@@ -58,7 +73,7 @@ const NavbarComponent = () => {
           className="hidden w-full md:block md:w-auto"
           id="navbar-multi-level"
         >
-          <ul className="flex md:items-center flex-wrap flex-col md:flex-row font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white">
+          <ul className="flex md:items-center flex-wrap space-x-2 flex-col md:flex-row font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white">
             <li>
               <Link
                 to="/"
@@ -80,9 +95,23 @@ const NavbarComponent = () => {
             </li>
 
             <li>
-              <div className="py-2 px-3 bg-white rounded-sm">
-                <SearchBar />
-              </div>
+              {isLoggedIn ? (
+                <button
+                  onClick={handleLogout}
+                  className="text-white cursor-pointer bg-red-500 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 text-center"
+                >
+                  Logout
+                </button>
+              ) : (
+                <Link to="/login">
+                  <button
+                    type="button"
+                    className="text-white cursor-pointer bg-[#28a154] hover:bg-[#167e3c] focus:ring-4 focus:outline-none focus:ring-[#3ab065] font-medium rounded-lg text-sm px-4 py-2 text-center"
+                  >
+                    Login
+                  </button>
+                </Link>
+              )}
             </li>
           </ul>
         </div>

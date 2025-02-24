@@ -9,6 +9,7 @@ import Copyright from "../components/Copyright";
 import Payment from "../components/Payment";
 import { useEffect, useState } from "react";
 import { getBestSellers, getProduct } from "../api/product/getProduct";
+import SearchBar from "../components/SearchBar";
 
 // interface Product {
 //   id: string;
@@ -40,6 +41,7 @@ const HomePage = () => {
       <NavbarComponent />
       <div className="bg-[#f4f6f9] p-6">
         <Banner />
+        <SearchBar />
 
         {/* Kategori */}
         <div className="bg-[#f4f6f9] w-full">

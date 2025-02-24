@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { Product } from "../data/products";
 import { getProduct } from "../api/product/getProduct";
 
@@ -67,8 +67,8 @@ const SearchBar = () => {
   };
 
   return (
-    <div className="relative">
-      <form onSubmit={handleSearchSubmit} className="max-w-md mx-auto">
+    <div className="relative pb-6 z-999">
+      <form onSubmit={handleSearchSubmit} className="w-full mx-auto">
         <label
           htmlFor="default-search"
           className="mb-2 text-sm font-medium text-gray-900 sr-only"

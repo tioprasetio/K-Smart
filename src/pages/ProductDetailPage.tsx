@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import NavbarComponent from "../components/Navbar";
 import Chatbot from "../components/Chatbot";
 
