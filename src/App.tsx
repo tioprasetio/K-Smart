@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router";
+import { Routes, Route, useLocation } from "react-router";
 import NotFoundPage from "./pages/NotFoundPage";
 import HomePage from "./pages/HomePage";
 import ProductDetailPage from "./pages/ProductDetailPage";
@@ -7,9 +7,26 @@ import BestSellersPage from "./pages/BestSellerPage";
 import CategoryPage from "./pages/CategoryPage";
 import AllProduct from "./pages/AllProducts";
 import LoginPage from "./pages/LoginPage";
+import { useEffect } from "react";
 // import AllProducts from "./pages/AllProducts";
 
+declare global {
+  interface Window {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    gtag?: (...args: any[]) => void;
+  }
+}
+
 function App() {
+  const location = useLocation(); // Mengambil lokasi saat ini di React Router
+
+  useEffect(() => {
+    if (window.gtag) {
+      window.gtag("config", "G-5B1S66Q62L", {
+        page_path: location.pathname,
+      });
+    }
+  }, [location]); // Akan berjalan setiap kali lokasi berubah
   return (
     <>
       <Routes>
