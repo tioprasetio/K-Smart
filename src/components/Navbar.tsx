@@ -98,7 +98,7 @@ const NavbarComponent = () => {
               {isLoggedIn ? (
                 <button
                   onClick={handleLogout}
-                  className="w-full md:w-auto text-white bg-red-500 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 text-center"
+                  className="cursor-pointer w-full md:w-auto text-white bg-red-500 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 text-center"
                 >
                   Logout
                 </button>
@@ -106,7 +106,7 @@ const NavbarComponent = () => {
                 <Link to="/login" className="w-full md:w-auto block">
                   <button
                     type="button"
-                    className="w-full md:w-auto text-white bg-[#28a154] hover:bg-[#167e3c] focus:ring-4 focus:outline-none focus:ring-[#3ab065] font-medium rounded-lg text-sm px-4 py-2 text-center"
+                    className="cursor-pointer w-full md:w-auto text-white bg-[#28a154] hover:bg-[#167e3c] focus:ring-4 focus:outline-none focus:ring-[#3ab065] font-medium rounded-lg text-sm px-4 py-2 text-center"
                   >
                     Login
                   </button>
