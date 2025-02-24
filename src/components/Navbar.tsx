@@ -40,7 +40,7 @@ const NavbarComponent = () => {
             className="h-8"
             alt="K-Link"
           />
-          <span className="text-gray-900 self-center text-2xl font-semibold whitespace-nowrap">
+          <span className="text-[#353535] self-center text-2xl font-semibold whitespace-nowrap">
             K-Smart
           </span>
         </Link>
@@ -77,7 +77,7 @@ const NavbarComponent = () => {
             <li>
               <Link
                 to="/"
-                className="block py-2 px-3 text-gray-700 hover:text-white hover:bg-[#28a154] bg-white rounded-sm"
+                className="block py-2 px-3 text-[#353535] hover:text-white hover:bg-[#28a154] bg-white rounded-sm"
                 aria-current="page"
               >
                 Home
@@ -86,8 +86,8 @@ const NavbarComponent = () => {
 
             <li>
               <Link
-                to="/"
-                className="block py-2 px-3 text-gray-700 hover:text-white hover:bg-[#28a154] bg-white rounded-sm"
+                to="/about-us"
+                className="block py-2 px-3 text-[#353535] hover:text-white hover:bg-[#28a154] bg-white rounded-sm"
                 aria-current="page"
               >
                 Tentang Kami

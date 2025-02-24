@@ -8,6 +8,7 @@ import CategoryPage from "./pages/CategoryPage";
 import AllProduct from "./pages/AllProducts";
 import LoginPage from "./pages/LoginPage";
 import { useEffect } from "react";
+import AboutUsPage from "./pages/AboutUsPage";
 // import AllProducts from "./pages/AllProducts";
 
 declare global {
@@ -51,6 +52,8 @@ function App() {
         <Route path="/category/:category" element={<CategoryPage />} />
 
         <Route path="/login" element={<LoginPage />} />
+
+        <Route path="/about-us" element={<AboutUsPage />} />
 
         {/* Dynamic Route */}
         <Route path="/product/:productSlug" element={<ProductDetailPage />} />

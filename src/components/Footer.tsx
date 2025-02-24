@@ -1,3 +1,5 @@
+import { Link } from "react-router";
+
 const Footer = () => {
   return (
     <>
@@ -55,7 +57,7 @@ const Footer = () => {
               </h2>
               <ul>
                 <li className="mb-2">
-                  <a href="">Tentang Kami</a>
+                  <Link to="/about-us">Tentang Kami</Link>
                 </li>
                 <li className="mb-2">
                   <a href="">Kenapa Harus K-Link</a>

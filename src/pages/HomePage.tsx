@@ -46,7 +46,9 @@ const HomePage = () => {
         {/* Kategori */}
         <div className="bg-[#f4f6f9] w-full">
           <div className="mx-auto">
-            <h2 className="text-xl font-bold mb-4">Browse Category</h2>
+            <h2 className="text-xl font-bold mb-4 text-[#353535]">
+              Browse Category
+            </h2>
             <Category />
           </div>
         </div>
