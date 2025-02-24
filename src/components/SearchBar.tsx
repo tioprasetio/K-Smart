@@ -67,7 +67,7 @@ const SearchBar = () => {
   };
 
   return (
-    <div className="relative pb-6 z-999">
+    <div className="relative pb-6 z-998">
       <form onSubmit={handleSearchSubmit} className="w-full mx-auto">
         <label
           htmlFor="default-search"
