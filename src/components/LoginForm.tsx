@@ -10,7 +10,7 @@ const LoginForm: React.FC = () => {
     e.preventDefault();
 
     // Simpan user ke localStorage (dummy authentication)
-    localStorage.setItem("user", JSON.stringify({ email, password }));
+    localStorage.setItem("username", email);
 
     navigate("/");
   };
