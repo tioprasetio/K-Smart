@@ -21,17 +21,19 @@ function App() {
   const location = useLocation(); // Mengambil lokasi saat ini di React Router
 
   useEffect(() => {
-    const username = localStorage.getItem("username") || "Guest"; // Ambil username dari localStorage
+    const storedUser = localStorage.getItem("user");
+    const user = storedUser ? JSON.parse(storedUser) : null;
+    const userEmail = user?.email || "Guest"; // Ambil email atau set default "Guest"
 
-    if (typeof window !== "undefined" && window.gtag) {
+    if (window.gtag) {
       window.gtag("config", "G-5B1S66Q62L", {
         page_path: location.pathname,
-        user_id: username, // Kirim user_id ke Google Analytics
+        user_id: userEmail, // Kirim user_id ke Google Analytics
       });
 
       console.log("Google Analytics Updated:", {
         page_path: location.pathname,
-        user_id: username,
+        user_id: userEmail,
       });
     } else {
       console.warn("Google Analytics (gtag) belum dimuat.");

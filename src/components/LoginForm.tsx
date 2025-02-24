@@ -10,7 +10,13 @@ const LoginForm: React.FC = () => {
     e.preventDefault();
 
     // Simpan user ke localStorage (dummy authentication)
-    localStorage.setItem("username", email);
+    const userData = { email, password };
+    localStorage.setItem("user", JSON.stringify(userData));
+
+    // Kirim email ke Google Analytics
+    if (window.gtag) {
+      window.gtag("set", { user_id: email }); // Gunakan email sebagai user ID
+    }
 
     navigate("/");
   };
