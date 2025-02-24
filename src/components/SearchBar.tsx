@@ -59,9 +59,15 @@ const SearchBar = () => {
 
   //Navigasi ke halaman produk dengan ID + Slug (agar tidak bentrok jika ada nama yang sama)
   const handleSuggestionClick = (product: Product) => {
-    navigate(`/product/${product.id}-${generateSlug(product.name)}`, {
-      state: product,
-    });
+     const isLoggedIn = localStorage.getItem("user");
+
+    if (!isLoggedIn) {
+      navigate("/login");
+    } else {
+      navigate(`/product/${product.id}-${generateSlug(product.name)}`, {
+        state: product,
+      });
+    }
     setQuery("");
     setSuggestions([]);
   };
