@@ -16,6 +16,7 @@ const LoginForm: React.FC = () => {
     // Kirim email ke Google Analytics
     if (window.gtag) {
       window.gtag("set", { user_id: email }); // Gunakan email sebagai user ID
+      window.gtag("config", "G-5B1S66Q62L", { user_id: email }); 
     }
 
     navigate("/");
