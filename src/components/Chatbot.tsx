@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { askMistral } from "../api/mistralApi";
+import { useDarkMode } from "../context/DarkMode";
 
 interface ChatbotProps {
   productName: string; // Produk yang sedang dibuka
@@ -12,6 +13,8 @@ const Chatbot: React.FC<ChatbotProps> = ({
   productDescription,
   productHarga,
 }) => {
+  const { isDarkMode } = useDarkMode();
+
   const [messages, setMessages] = useState<{ role: string; content: string }[]>(
     []
   );
@@ -35,7 +38,11 @@ const Chatbot: React.FC<ChatbotProps> = ({
   };
 
   return (
-    <div className="w-full bg-white shadow-lg rounded-lg">
+    <div
+      className={`${
+        isDarkMode ? "bg-[#303030]" : "bg-[#ffffff]"
+      } w-full shadow-lg rounded-lg`}
+    >
       <div className="p-3 bg-[#28a154] text-white font-bold rounded-t-lg">
         Chatbot AI K-Smart
       </div>
@@ -71,7 +78,11 @@ const Chatbot: React.FC<ChatbotProps> = ({
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder={`Tanyakan tentang ${productName}...`}
-          className="w-full p-2 border border-gray-300 rounded-md outline-none"
+          className={`${
+            isDarkMode
+              ? "bg-[#282828] text-[#f0f0f0] border-gray-700"
+              : "bg-[#ffffff] text-gray-900 border-gray-300"
+          } w-full p-2 border  rounded-md outline-none`}
         />
         <button
           onClick={handleSendMessage}

@@ -1,9 +1,12 @@
 import { useLocation } from "react-router";
 import NavbarComponent from "../components/Navbar";
 import Chatbot from "../components/Chatbot";
+import { useDarkMode } from "../context/DarkMode";
+import PromoProduct from "../components/PromoProduct";
 
 const ProductDetailPage = () => {
   // const params = useParams<{ productSlug: string }>();
+  const { isDarkMode } = useDarkMode();
   const location = useLocation();
 
   const product = location.state;
@@ -12,7 +15,11 @@ const ProductDetailPage = () => {
       <NavbarComponent />
       {product ? (
         <>
-          <div className="bg-[#f4f6f9] p-6 pt-24 sm:pt-28 w-full min-h-screen">
+          <div
+            className={`${
+              isDarkMode ? "bg-[#140c00]" : "bg-[#f4f6f9]"
+            } p-6 pt-24 sm:pt-28 w-full min-h-screen`}
+          >
             <div className="container mx-auto">
               <div className="grid grid-cols-1 md:grid-cols-2 md:gap-3 xl:gap-4 md:pt-5">
                 {/* <!-- Gambar Produk --> */}
@@ -42,24 +49,36 @@ const ProductDetailPage = () => {
                   </section>
 
                   <div className="hidden md:block">
-                    <section className="bg-[#fff] rounded-lg p-4 mb-3 xl:mb-4">
+                    <section
+                      className={`${
+                        isDarkMode
+                          ? "bg-[#303030] text-[#f0f0f0]"
+                          : "bg-[#ffffff] text-[#353535]"
+                      } rounded-lg p-4 mb-3 xl:mb-4`}
+                    >
                       <div className="text-[#353535]p6">Informasi Produk</div>
                       <hr className="mt-4 border-t border-gray-300" />
-                      <div className="text-[#353535] flex items-center justify-between pt-4">
+                      <div className="flex items-center justify-between pt-4">
                         <div>Berat Pengiriman</div>
                         <div>{product.beratPengiriman} gr</div>
                       </div>
-                      <div className="text-[#353535] flex items-center justify-between pt-4">
+                      <div className="flex items-center justify-between pt-4">
                         <div>Berat Bersih Satuan</div>
                         <div>{product.beratBersih} ml</div>
                       </div>
-                      <div className="text-[#353535] flex items-center justify-between pt-4">
+                      <div className="flex items-center justify-between pt-4">
                         <div>Pemesanan Minimal</div>
                         <div>{product.pemesananMin} pcs</div>
                       </div>
                     </section>
 
-                    <section className="bg-white p-6 mb-3 xl:mb-4">
+                    <section
+                      className={`${
+                        isDarkMode
+                          ? "bg-[#303030] text-[#f0f0f0]"
+                          : "bg-[#ffffff] text-[#353535]"
+                      } rounded-lg p-6 mb-3 xl:mb-4`}
+                    >
                       <h2 className="h3 pb-2">Jaminan Mutu</h2>
                       <div className="pt-4 flex items-center">
                         <i className="text-xl bx bx-check-circle text-[#28a154]"></i>
@@ -78,9 +97,17 @@ const ProductDetailPage = () => {
                 {/* <!-- Judul --> */}
                 <section className="rounded-lg">
                   <div className="flex flex-col">
-                    <section className="bg-[#ffffff] p-6 mb-3 xl:mb-4">
+                    <section
+                      className={`${
+                        isDarkMode ? "bg-[#303030]" : "bg-[#ffffff]"
+                      } p-6 mb-3 xl:mb-4 rounded-lg`}
+                    >
                       {/* <!-- Judul Produk, rating, dan jumlah penjualan --> */}
-                      <h1 className="text-2xl font-semibold mb-2 text-[#353535]">
+                      <h1
+                        className={`${
+                          isDarkMode ? "text-[#f0f0f0]" : "text-[#353535]"
+                        } text-2xl font-semibold mb-2`}
+                      >
                         {product.name}
                       </h1>
                       <div className="flex flex-row items-center">
@@ -96,10 +123,18 @@ const ProductDetailPage = () => {
 
                       {/* <!-- Harga produk --> */}
                       <div className="flex flex-row items-center mt-10">
-                        <h1 className="text-[#353535] text-3xl font-bold">
+                        <h1
+                          className={`${
+                            isDarkMode ? "text-[#f0f0f0]" : "text-[#353535]"
+                          } text-3xl font-bold`}
+                        >
                           Rp{product.harga?.toLocaleString()}
                         </h1>
-                        <span className="text-[#353535] text-xl font-medium">
+                        <span
+                          className={`${
+                            isDarkMode ? "text-[#f0f0f0]" : "text-[#353535]"
+                          } text-xl font-medium`}
+                        >
                           &nbsp;/ pcs
                         </span>
                       </div>
@@ -159,14 +194,24 @@ const ProductDetailPage = () => {
 
                       {/* <!-- Muncul jika produk termasuk bundle --> */}
                       <hr className="mt-4 border-t border-gray-300" />
-                      <h3 className="mt-4 text-lg font-semibold text-[#353535]">
+                      <h3
+                        className={`${
+                          isDarkMode ? "text-[#f0f0f0]" : "text-[#353535]"
+                        } mt-4 text-lg font-semibold`}
+                      >
                         Isi Produk:
                       </h3>
-                      <div className="p-3 rounded-lg bg-[#f4f6f9] flex rounded-t-lg mt-4 rounded-b-lg">
+                      <div
+                        className={`${
+                          isDarkMode
+                            ? "bg-[#404040] text-[#f0f0f0]"
+                            : "bg-[#f4f6f9] text-[#353535]"
+                        } p-3 rounded-lg flex rounded-t-lg mt-4 rounded-b-lg`}
+                      >
                         <a className="inline-block" href="">
                           <img
                             src={product.picture}
-                            alt="K-Omega Squa"
+                            alt={product.picture}
                             className="h-16 w-16 mr-2 object-cover"
                           />
                         </a>
@@ -185,73 +230,16 @@ const ProductDetailPage = () => {
                       </div>
                     </section>
 
-                    <section className="bg-[#f4f6f9] -mt-4 mb-0 xl:mb-4 relative">
-                      <div className="p-6 md:px-0 font-bold text-lg text-black leading-9">
+                    <section className="mt-4 mb-0 xl:mb-4 relative">
+                      <div
+                        className={`${
+                          isDarkMode ? "text-[#f0f0f0]" : "text-[#353535]"
+                        } p-6 md:px-0 font-bold text-lg leading-9`}
+                      >
                         Promo Tersedia untuk Produk ini
                       </div>
 
-                      {/* <!-- Swiper Container --> */}
-                      <div className="swiper promoSwiper">
-                        <div className="swiper-wrapper">
-                          {/* <!-- Slide 1 --> */}
-                          <div className="swiper-slide">
-                            <div className="p-3 rounded-lg bg-[#ffffff] flex gap-4">
-                              <a
-                                className="flex justify-center items-center"
-                                href=""
-                              >
-                                <img
-                                  src="https://kmart-production.s3.ap-southeast-1.amazonaws.com/attachment/202402/07-jcldk2--46__DISKON_10_.jpg"
-                                  alt="K-Omega Squa"
-                                  className="h-10 w-full object-cover"
-                                />
-                              </a>
-                              <div className="flex-1">
-                                <div className="flex flex-col gap-2">
-                                  <div className="flex-1 text-[#353535] font-bold text-md">
-                                    <a className="inline-block" href="">
-                                      Promo Diskon 10% Pembelanjaan Customer
-                                    </a>
-                                  </div>
-                                  <div className="text-[#959595] text-xs text-neutral-1 pl-1">
-                                    <i className="bx bx-calendar"></i> Hingga
-                                    December 31, 2025
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* <!-- Slide 2 --> */}
-                          <div className="swiper-slide">
-                            <div className="p-3 rounded-lg bg-[#ffffff] flex gap-4">
-                              <a
-                                className="flex justify-center items-center"
-                                href=""
-                              >
-                                <img
-                                  src="https://kmart-production.s3.ap-southeast-1.amazonaws.com/attachment/202402/07-jcldk2--46__DISKON_10_.jpg"
-                                  alt="K-Omega Squa"
-                                  className="h-10 w-full object-cover"
-                                />
-                              </a>
-                              <div className="flex-1">
-                                <div className="flex flex-col gap-2">
-                                  <div className="flex-1 text-[#353535] font-bold text-md">
-                                    <a className="inline-block" href="">
-                                      Promo Diskon 10% Pembelanjaan Customer
-                                    </a>
-                                  </div>
-                                  <div className="text-[#959595] text-xs text-neutral-1 pl-1">
-                                    <i className="bx bx-calendar"></i> Hingga
-                                    December 31, 2025
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                      <PromoProduct />
 
                       <div className="p-6">
                         {/* Chatbot AI */}
