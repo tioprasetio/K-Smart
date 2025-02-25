@@ -4,10 +4,13 @@ import NavbarComponent from "../components/Navbar";
 import { Product } from "../data/products";
 import { useEffect, useState } from "react";
 import { getProduct } from "../api/product/getProduct";
+import { useDarkMode } from "../context/DarkMode";
 
 const AllProduct = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]); //Tambahkan state filter
+
+  const { isDarkMode } = useDarkMode();
 
   const [searchParams] = useSearchParams();
   const keyword = searchParams.get("keyword"); //Ambil keyword dari URL
@@ -39,9 +42,9 @@ const AllProduct = () => {
   return (
     <>
       <NavbarComponent />
-      <div className="bg-[#f4f6f9] overflow-x-hidden w-full min-h-screen pt-16 sm:pt-24">
-        <div className="text-[#353535] text-xl font-medium bg-[#f4f6f9] p-6">
-          <span>
+      <div className={`${isDarkMode ? "bg-[#140c00]" : "bg-[#f4f6f9]"} overflow-x-hidden w-full min-h-screen pt-16 sm:pt-24`}>
+        <div className="text-[#353535] text-xl font-medium p-6">
+          <span className={`${isDarkMode ? "text-[#f0f0f0]" : "text-[#353535]"}`}>
             <Link className="text-[#28a154]" to="/">
               Home
             </Link>{" "}
@@ -49,7 +52,7 @@ const AllProduct = () => {
           </span>
         </div>
 
-        <div className="bg-[#f4f6f9] p-6 w-full">
+        <div className="p-6 w-full">
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {filteredProducts.length > 0 ? (
               filteredProducts.map((product) => (

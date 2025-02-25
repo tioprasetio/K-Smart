@@ -56,7 +56,7 @@ const ProductDetailPage = () => {
                           : "bg-[#ffffff] text-[#353535]"
                       } rounded-lg p-4 mb-3 xl:mb-4`}
                     >
-                      <div className="text-[#353535]p6">Informasi Produk</div>
+                      <div className="p6">Informasi Produk</div>
                       <hr className="mt-4 border-t border-gray-300" />
                       <div className="flex items-center justify-between pt-4">
                         <div>Berat Pengiriman</div>
@@ -253,24 +253,36 @@ const ProductDetailPage = () => {
 
                     {/* <!-- Informasi produk dan jaminan mutu mobile version --> */}
                     <div className="mt-4 md:hidden">
-                      <section className="bg-[#fff] rounded-lg p-4 mb-3 xl:mb-4">
-                        <div className="text-[#353535]p6">Informasi Produk</div>
+                      <section
+                        className={`${
+                          isDarkMode
+                            ? "bg-[#303030] text-[#f0f0f0]"
+                            : "bg-[#ffffff] text-[#353535]"
+                        } rounded-lg p-4 mb-3 xl:mb-4`}
+                      >
+                        <div className="p6">Informasi Produk</div>
                         <hr className="mt-4 border-t border-gray-300" />
-                        <div className="text-[#353535] flex items-center justify-between pt-4">
+                        <div className="flex items-center justify-between pt-4">
                           <div>Berat Pengiriman</div>
                           <div>{product.beratPengiriman} gr</div>
                         </div>
-                        <div className="text-[#353535] flex items-center justify-between pt-4">
+                        <div className="flex items-center justify-between pt-4">
                           <div>Berat Bersih Satuan</div>
                           <div>{product.beratBersih} ml</div>
                         </div>
-                        <div className="text-[#353535] flex items-center justify-between pt-4">
+                        <div className="flex items-center justify-between pt-4">
                           <div>Pemesanan minimal</div>
                           <div>{product.pemesananMin} pcs</div>
                         </div>
                       </section>
 
-                      <section className="bg-white p-6 mb-3 xl:mb-4">
+                      <section
+                        className={`${
+                          isDarkMode
+                            ? "bg-[#303030] text-[#f0f0f0]"
+                            : "bg-[#ffffff] text-[#353535]"
+                        } rounded-lg p-6 mb-3 xl:mb-4`}
+                      >
                         <h2 className="h3 pb-2">Jaminan Mutu</h2>
                         <div className="pt-4 flex items-center">
                           <i className="text-xl bx bx-check-circle text-[#28a154]"></i>
