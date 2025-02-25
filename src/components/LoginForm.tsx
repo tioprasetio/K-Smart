@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
+import { useDarkMode } from "../context/DarkMode";
 
 const LoginForm: React.FC = () => {
+  const { isDarkMode } = useDarkMode();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -29,14 +31,18 @@ const LoginForm: React.FC = () => {
         placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        className="w-full p-2 border rounded"
+        className={`${
+          isDarkMode ? "bg-[#252525] text-[#f0f0f0]" : "bg-white text-[#353535]"
+        } w-full p-2 border rounded`}
       />
       <input
         type="password"
         placeholder="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        className="w-full p-2 border rounded"
+        className={`${
+          isDarkMode ? "bg-[#252525] text-[#f0f0f0]" : "bg-white text-[#353535]"
+        } w-full p-2 border rounded`}
       />
       <button
         type="submit"

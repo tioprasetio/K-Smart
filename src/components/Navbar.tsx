@@ -2,10 +2,13 @@ import "flowbite/dist/flowbite.min.js";
 import { Link, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import "flowbite";
+import { useDarkMode } from "../context/DarkMode";
 
 const NavbarComponent = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
+
+  const { isDarkMode, setIsDarkMode } = useDarkMode();
 
   // Cek apakah user sudah login (ada data di localStorage)
   useEffect(() => {
@@ -29,7 +32,11 @@ const NavbarComponent = () => {
   }, []);
 
   return (
-    <nav className="bg-white border-gray-200 fixed top-0 left-0 w-full z-999 shadow-md">
+    <nav
+      className={`${
+        isDarkMode ? "bg-[#140c00]" : "bg-white"
+      } border-gray-200 fixed top-0 left-0 w-full z-999 shadow-md`}
+    >
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <Link
           to="/"
@@ -40,7 +47,11 @@ const NavbarComponent = () => {
             className="h-8"
             alt="K-Link"
           />
-          <span className="text-[#353535] self-center text-2xl font-semibold whitespace-nowrap">
+          <span
+            className={`${
+              isDarkMode ? "text-[#f0f0f0]" : "text-[#353535]"
+            } self-center text-2xl font-semibold whitespace-nowrap`}
+          >
             K-Smart
           </span>
         </Link>
@@ -73,11 +84,21 @@ const NavbarComponent = () => {
           className="hidden w-full md:block md:w-auto"
           id="navbar-multi-level"
         >
-          <ul className="flex flex-col md:flex-row md:items-center w-full md:w-auto space-y-2 md:space-y-0 md:space-x-2 font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:mt-0 md:border-0 md:bg-white">
+          <ul
+            className={`${
+              isDarkMode
+                ? "text-[#f0f0f0] bg-[#292929] md:bg-[#140c00] border-[#03180b]"
+                : "text-[#353535] bg-gray-50 md:bg-white border-gray-100"
+            } flex flex-col md:flex-row md:items-center w-full md:w-auto space-y-2 md:space-y-0 md:space-x-2 font-medium p-4 md:p-0 mt-4 border rounded-lg md:mt-0 md:border-0`}
+          >
             <li>
               <Link
                 to="/"
-                className="block py-2 px-3 text-[#353535] hover:text-white hover:bg-[#28a154] bg-white rounded-sm"
+                className={`${
+                  isDarkMode
+                    ? "text-[#f0f0f0] bg-[#140c00]"
+                    : "text-[#353535] bg-white"
+                } block py-2 px-3 hover:text-white hover:bg-[#28a154] rounded-sm`}
                 aria-current="page"
               >
                 Home
@@ -87,7 +108,11 @@ const NavbarComponent = () => {
             <li>
               <Link
                 to="/about-us"
-                className="block py-2 px-3 text-[#353535] hover:text-white hover:bg-[#28a154] bg-white rounded-sm"
+                className={`${
+                  isDarkMode
+                    ? "text-[#f0f0f0] bg-[#140c00]"
+                    : "text-[#353535] bg-white"
+                } block py-2 px-3 hover:text-white hover:bg-[#28a154] rounded-sm`}
                 aria-current="page"
               >
                 Tentang Kami
@@ -112,6 +137,22 @@ const NavbarComponent = () => {
                   </button>
                 </Link>
               )}
+            </li>
+            <li>
+              <button
+                onClick={() => setIsDarkMode(!isDarkMode)}
+                className={`${
+                  isDarkMode
+                    ? "text-[#f0f0f0] bg-[#303030]"
+                    : "text-[#353535] bg-[#f0f0f0]"
+                } cursor-pointer block py-2 px-3 hover:text-white w-full md:w-auto hover:bg-[#28a154] rounded-sm`}
+              >
+                {isDarkMode ? (
+                  <i className="bx bxs-sun"></i>
+                ) : (
+                  <i className="bx bxs-moon"></i>
+                )}
+              </button>
             </li>
           </ul>
         </div>

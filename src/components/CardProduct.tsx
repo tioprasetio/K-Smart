@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router";
 import Btn from "./Btn";
+import { useDarkMode } from "../context/DarkMode";
 
 type CardProductProps = {
   name?: string;
@@ -16,6 +17,8 @@ type CardProductProps = {
 };
 
 const CardProduct = (props: CardProductProps) => {
+  const { isDarkMode } = useDarkMode();
+
   const {
     name = "Unknown",
     picture,
@@ -30,7 +33,7 @@ const CardProduct = (props: CardProductProps) => {
     id,
   } = props;
   // console.log('card product=',name);
-  
+
   const navigate = useNavigate();
   const productSlug = name?.toLowerCase().replace(/\s+/g, "-");
 
@@ -60,7 +63,11 @@ const CardProduct = (props: CardProductProps) => {
   return (
     <>
       {/* <!-- Card Produk 1 --> */}
-      <div className="bg-white rounded-lg shadow-lg flex flex-col items-center text-center justify-between">
+      <div
+        className={`${
+          isDarkMode ? "bg-[#303030]" : "bg-white"
+        } rounded-lg shadow-lg flex flex-col items-center text-center justify-between`}
+      >
         {/* <!-- Gambar Produk --> */}
         <img src={picture} alt="Produk" className="w-full object-cover" />
 
@@ -68,7 +75,11 @@ const CardProduct = (props: CardProductProps) => {
           {/* <!-- Kode Produk --> */}
           {/* <!-- <p className="text-[#353535] text-sm font-semibold">HD012</p> --> */}
           {/* <!-- Nama Produk --> */}
-          <h3 className="text-lg text-left font-normal text-[#353535] mt-2">
+          <h3
+            className={`${
+              isDarkMode ? "text-[#f0f0f0]" : "text-[#353535]"
+            } text-lg text-left font-normal mt-2`}
+          >
             {name}
           </h3>
 
@@ -76,7 +87,11 @@ const CardProduct = (props: CardProductProps) => {
           <div className="flex items-center flex-row w-full mt-2 text-sm">
             <div className="flex flex-col text-left gap-1">
               <div className="flex flex-row items-center">
-                <span className="text-[#353535] text-base font-bold">
+                <span
+                  className={`${
+                    isDarkMode ? "text-[#f0f0f0]" : "text-[#353535]"
+                  } text-base font-bold`}
+                >
                   Rp{harga?.toLocaleString()}
                 </span>
                 <span className="text-[#353535] text-xs">&nbsp;/ pcs</span>

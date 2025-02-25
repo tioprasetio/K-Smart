@@ -1,6 +1,7 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
 import { Link } from "react-router";
+import { useDarkMode } from "../context/DarkMode";
 
 const categories = [
   { name: "Health Accessories", image: "/assets/images/health_accessories.png" },
@@ -10,6 +11,8 @@ const categories = [
 ];
 
 const Category = () => {
+  const { isDarkMode } = useDarkMode();
+
   return (
     <div className="mb-16">
       <Swiper
@@ -28,13 +31,23 @@ const Category = () => {
         {categories.map((category, index) => (
           <SwiperSlide key={index}>
             <Link to={`/category/${encodeURIComponent(category.name)}`}>
-              <div className="bg-white p-4 rounded-lg text-center flex flex-col items-center min-h-[200px] justify-center">
+              <div
+                className={`${
+                  isDarkMode ? "bg-[#303030]" : "bg-white"
+                } p-4 rounded-lg text-center flex flex-col items-center min-h-[200px] justify-center`}
+              >
                 <img
                   src={category.image}
                   className="w-24 h-24 object-cover"
                   alt={category.name}
                 />
-                <h3 className="text-lg font-semibold mt-2">{category.name}</h3>
+                <h3
+                  className={`${
+                    isDarkMode ? "text-[#f0f0f0]" : "text-[#353535]"
+                  } text-lg font-semibold mt-2`}
+                >
+                  {category.name}
+                </h3>
               </div>
             </Link>
           </SwiperSlide>

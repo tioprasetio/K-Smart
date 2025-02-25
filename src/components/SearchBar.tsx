@@ -2,12 +2,14 @@ import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router";
 import { Product } from "../data/products";
 import { getProduct } from "../api/product/getProduct";
+import { useDarkMode } from "../context/DarkMode";
 
 const SearchBar = () => {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState<Product[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const navigate = useNavigate();
+  const { isDarkMode } = useDarkMode();
 
   //Fetch products sekali saja jika belum ada data
   useEffect(() => {
@@ -102,7 +104,11 @@ const SearchBar = () => {
           <input
             type="search"
             id="default-search"
-            className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-[#28a154] focus:border-[#28a154]"
+            className={`${
+              isDarkMode
+                ? "bg-[#303030] text-white border-gray-700"
+                : "bg-white text-[#353535] border-gray-300"
+            } block w-full p-4 ps-10 text-sm border rounded-lg focus:ring-[#28a154] focus:border-[#28a154]`}
             placeholder="Cari produk"
             value={query}
             onChange={handleSearch}
@@ -119,11 +125,21 @@ const SearchBar = () => {
 
       {/*Tampilkan hasil pencarian */}
       {suggestions.length > 0 && (
-        <ul className="absolute bg-white border border-gray-200 text-[#353535] mt-1 w-64 rounded-md shadow-lg">
+        <ul
+          className={`${
+            isDarkMode
+              ? "bg-[#303030] text-[#f0f0f0] shadow-xl`"
+              : "bg-white text-[#353535]"
+          } absolute mt-1 w-full rounded-md shadow-lg`}
+        >
           {suggestions.map((product) => (
             <li
               key={product.id}
-              className="p-2 hover:bg-gray-100 cursor-pointer"
+              className={`${
+                isDarkMode
+                  ? "hover:bg-[#252525] rounded-md"
+                  : "hover:bg-gray-100 rounded-md"
+              } p-2 cursor-pointer`}
               onClick={() => handleSuggestionClick(product)}
             >
               {product.name}
@@ -134,8 +150,18 @@ const SearchBar = () => {
 
       {/*Tampilkan jika tidak ada hasil */}
       {suggestions.length === 0 && query.length > 0 && (
-        <ul className="absolute bg-white border border-gray-200 text-[#353535] mt-1 w-64 rounded-md shadow-lg">
-          <p className="p-2 hover:bg-gray-100 cursor-pointer">
+        <ul
+          className={`${
+            isDarkMode
+              ? "bg-[#303030] text-[#f0f0f0]"
+              : "bg-white text-[#353535]"
+          } absolute mt-1 w-full rounded-md shadow-lg`}
+        >
+          <p
+            className={`${
+              isDarkMode ? "hover:bg-[#252525]" : "hover:bg-gray-100"
+            } p-2 cursor-pointer`}
+          >
             Produk tidak ditemukan.
           </p>
         </ul>

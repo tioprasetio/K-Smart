@@ -1,6 +1,7 @@
 import { useEffect } from "react";
-
+import { useDarkMode } from "../context/DarkMode";
 const Payment = () => {
+  const { isDarkMode } = useDarkMode();
   useEffect(() => {
     // Pastikan elemen ada sebelum memprosesnya
     const logo = document.querySelector(".logo");
@@ -20,9 +21,22 @@ const Payment = () => {
   }, []); // Hanya dijalankan sekali setelah komponen dirender
 
   return (
-    <section className="container w-full mx-auto flex flex-col gap-4 mt-8">
-      <h2 className="font-bold text-xl text-[#353535]">Pembayaran</h2>
-      <div className="gradasi flex flex-col">
+    <section className="w-full mx-auto flex flex-col gap-4 mt-8">
+      <h2
+        className={`${
+          isDarkMode ? "text-[#f0f0f0]" : "text-[#353535]"
+        } font-bold text-xl`}
+      >
+        Pembayaran
+      </h2>
+      <div
+        className={`w-full flex flex-col relative before:absolute after:absolute before:top-0 after:top-0 before:bottom-0 after:bottom-0 before:w-[30%] after:w-[30%] before:left-0 after:right-0 before:z-10 after:z-10
+    ${
+      isDarkMode
+        ? "before:bg-gradient-to-l before:from-transparent before:to-[#140c00] after:bg-gradient-to-r after:from-transparent after:to-[#140c00]"
+        : "before:bg-gradient-to-l before:from-transparent before:to-[#f6f5fa] after:bg-gradient-to-r after:from-transparent after:to-[#f6f5fa]"
+    }`}
+      >
         <div className="logo-container">
           <div className="logo">
             <img

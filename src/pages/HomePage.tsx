@@ -10,6 +10,7 @@ import Payment from "../components/Payment";
 import { useEffect, useState } from "react";
 import { getBestSellers, getProduct } from "../api/product/getProduct";
 import SearchBar from "../components/SearchBar";
+import { useDarkMode } from "../context/DarkMode";
 
 // interface Product {
 //   id: string;
@@ -20,6 +21,7 @@ import SearchBar from "../components/SearchBar";
 const HomePage = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [bestSellers, setBestSellers] = useState<Product[]>([]);
+  const { isDarkMode } = useDarkMode();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,16 +39,24 @@ const HomePage = () => {
     fetchData();
   }, []);
   return (
-    <div className="bg-[#f4f6f9] pt-16 sm:pt-24 overflow-x-hidden w-full min-h-screen">
+    <div
+      className={`${
+        isDarkMode ? "bg-[#140c00]" : "bg-[#f4f6f9]"
+      } pt-16 sm:pt-24 overflow-x-hidden w-full min-h-screen`}
+    >
       <NavbarComponent />
-      <div className="bg-[#f4f6f9] p-6">
+      <div className="p-6">
         <Banner />
         <SearchBar />
 
         {/* Kategori */}
-        <div className="bg-[#f4f6f9] w-full">
+        <div className="w-full">
           <div className="mx-auto">
-            <h2 className="text-xl font-bold mb-4 text-[#353535]">
+            <h2
+              className={`${
+                isDarkMode ? "text-[#f0f0f0]" : "text-[#353535]"
+              } text-xl font-bold mb-4`}
+            >
               Browse Category
             </h2>
             <Category />
@@ -54,10 +64,16 @@ const HomePage = () => {
         </div>
 
         {/* Paling laris */}
-        <div className="bg-[#f4f6f9] w-full">
+        <div className="w-full">
           <div className="mx-auto">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl text-[#353535] font-bold">Paling Laris</h2>
+              <h2
+                className={`${
+                  isDarkMode ? "text-[#f0f0f0]" : "text-[#353535]"
+                } text-xl font-bold`}
+              >
+                Paling Laris
+              </h2>
               <button type="button" className="cursor-pointer">
                 <span className="text-xl text-[#28a154] font-medium">
                   <Link to="/best-sellers">Lihat Semua</Link>
@@ -74,10 +90,16 @@ const HomePage = () => {
         </div>
 
         {/* Semua Produk */}
-        <div className="bg-[#f4f6f9] w-full mt-8">
+        <div className="w-full mt-8">
           <div className="mx-auto">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl text-[#353535] font-bold">Semua Produk</h2>
+              <h2
+                className={`${
+                  isDarkMode ? "text-[#f0f0f0]" : "text-[#353535]"
+                } text-xl font-bold`}
+              >
+                Semua Produk
+              </h2>
               <button type="button" className="cursor-pointer">
                 <span className="text-xl text-[#28a154] font-medium">
                   <Link to="/all-product">Lihat Semua</Link>

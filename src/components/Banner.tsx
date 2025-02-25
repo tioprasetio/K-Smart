@@ -3,7 +3,7 @@ import { Autoplay } from "swiper/modules";
 
 const Banner = () => {
   return (
-    <div className="bg-[#f4f6f9] w-full mb-8">
+    <div className="w-full mb-8">
       <div className="mx-auto">
         {/* Swiper Container */}
         <Swiper

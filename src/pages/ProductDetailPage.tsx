@@ -89,7 +89,8 @@ const ProductDetailPage = () => {
                           {product.rate}
                         </span>
                         <span className="text-[#959595] text-lg px-1">|</span>
-                        <span className="text-[#959595] text-lg">Terjual {product.terjual}
+                        <span className="text-[#959595] text-lg">
+                          Terjual {product.terjual}
                         </span>
                       </div>
 
@@ -161,7 +162,7 @@ const ProductDetailPage = () => {
                       <h3 className="mt-4 text-lg font-semibold text-[#353535]">
                         Isi Produk:
                       </h3>
-                      <div className="p-3 rounded-lg bg-[#f4f6f9] flex rounded-none rounded-t-lg mt-4 rounded-b-lg">
+                      <div className="p-3 rounded-lg bg-[#f4f6f9] flex rounded-t-lg mt-4 rounded-b-lg">
                         <a className="inline-block" href="">
                           <img
                             src={product.picture}
