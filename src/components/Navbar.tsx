@@ -37,7 +37,7 @@ const NavbarComponent = () => {
         isDarkMode ? "bg-[#140c00]" : "bg-white"
       } border-gray-200 fixed top-0 left-0 w-full z-999 shadow-md`}
     >
-      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+      <div className="w-full flex flex-wrap items-center justify-between mx-auto p-4">
         <Link
           to="/"
           className="flex items-center space-x-2 rtl:space-x-reverse px-3"
