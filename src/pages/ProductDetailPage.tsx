@@ -3,6 +3,9 @@ import NavbarComponent from "../components/Navbar";
 import Chatbot from "../components/Chatbot";
 import { useDarkMode } from "../context/DarkMode";
 import PromoProduct from "../components/PromoProduct";
+import { useState } from "react";
+import Btn from "../components/Btn";
+import { formatRupiah } from "../utils/formatCurrency";
 
 const ProductDetailPage = () => {
   // const params = useParams<{ productSlug: string }>();
@@ -10,6 +13,21 @@ const ProductDetailPage = () => {
   const location = useLocation();
 
   const product = location.state;
+
+  // State untuk kuantitas produk
+  const [quantity, setQuantity] = useState(1);
+
+  // Fungsi untuk menambah kuantitas
+  const increaseQuantity = () => {
+    setQuantity((prevQuantity) => prevQuantity + 1);
+  };
+
+  // Fungsi untuk mengurangi kuantitas
+  const decreaseQuantity = () => {
+    if (quantity > 1) {
+      setQuantity((prevQuantity) => prevQuantity - 1);
+    }
+  };
   return (
     <>
       <NavbarComponent />
@@ -91,6 +109,15 @@ const ProductDetailPage = () => {
                         </button>
                       </div>
                     </section>
+                    <div className="flex gap-2">
+                      <Btn className="flex-1" variant="outline">
+                        <i className="bx bx-cart-add text-lg"></i> Keranjang
+                      </Btn>
+                      <Btn className="flex-1">
+                        Beli Sekarang{" "}
+                        <i className="bx bx-right-arrow-alt text-lg"></i>
+                      </Btn>
+                    </div>
                   </div>
                 </div>
 
@@ -128,7 +155,7 @@ const ProductDetailPage = () => {
                             isDarkMode ? "text-[#f0f0f0]" : "text-[#353535]"
                           } text-3xl font-bold`}
                         >
-                          Rp{product.harga?.toLocaleString()}
+                          {formatRupiah(product.harga)}
                         </h1>
                         <span
                           className={`${
@@ -161,36 +188,48 @@ const ProductDetailPage = () => {
                       {/* <hr className="mt-4 border-t border-gray-300" /> */}
 
                       {/* <!-- Kuantitas Produk --> */}
-                      {/* <div className="flex items-center justify-between pt-4">
-                          <h3 className="text-lg font-semibold text-[#353535]">
-                            Kuantitas
-                          </h3>
-                          <div className="flex items-center gap-4">
-                            <button
-                              type="button"
-                              id="decrease"
-                              className="focus:outline-none cursor-pointer text-gray-400"
-                              disabled
-                            >
-                              <i className="bx bx-minus-circle text-2xl"></i>
-                            </button>
-                            <input
-                              type="text"
-                              className="text-base font-semibold border-b border-gray-400 text-center focus:outline-none w-14"
-                              name="quantity"
-                              id="quantity"
-                              value="1"
-                              readOnly
-                            />
-                            <button
-                              type="button"
-                              id="increase"
-                              className="focus:outline-none cursor-pointer"
-                            >
-                              <i className="bx bx-plus-circle text-2xl text-gray-700"></i>
-                            </button>
-                          </div>
-                        </div> */}
+                      <div className="flex items-center justify-between pt-4">
+                        <h3
+                          className={`${
+                            isDarkMode ? "text-[#F0F0F0]" : "text-[#353535]"
+                          } text-lg font-semibold `}
+                        >
+                          Kuantitas
+                        </h3>
+                        <div className="flex items-center gap-4">
+                          <button
+                            type="button"
+                            onClick={decreaseQuantity} // Tambahkan fungsi
+                            className={`focus:outline-none cursor-pointer text-gray-400 ${
+                              quantity === 1
+                                ? "opacity-50 cursor-not-allowed"
+                                : ""
+                            }`}
+                            disabled={quantity === 1}
+                          >
+                            <i className="bx bx-minus-circle text-2xl"></i>
+                          </button>
+                          <input
+                            type="text"
+                            className={`${
+                              isDarkMode
+                                ? "text-[#F0F0F0] bg-[#303030]"
+                                : "text-[#353535] bg-[#ffffff]"
+                            } text-base font-semibold text-center focus:outline-none w-14 border-none`}
+                            name="quantity"
+                            id="quantity"
+                            value={quantity} // Gunakan state quantity
+                            readOnly
+                          />
+                          <button
+                            type="button"
+                            onClick={increaseQuantity} // Tambahkan fungsi
+                            className="focus:outline-none cursor-pointer"
+                          >
+                            <i className="bx bx-plus-circle text-2xl text-gray-400"></i>
+                          </button>
+                        </div>
+                      </div>
 
                       {/* <!-- Muncul jika produk termasuk bundle --> */}
                       <hr className="mt-4 border-t border-gray-300" />
@@ -215,16 +254,21 @@ const ProductDetailPage = () => {
                             className="h-16 w-16 mr-2 object-cover"
                           />
                         </a>
-                        <div className="flex-1">
-                          <div className="flex">
-                            <div className="flex-1">
+                        <div
+                          className={`${
+                            isDarkMode ? "text-[#F0F0F0]" : "text-[#353535]"
+                          } flex-1`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex flex-col gap-1">
                               <a className="inline-block" href="">
                                 {product.name}
                               </a>
+                              <a className="inline-block font-semibold" href="">
+                                {formatRupiah(product.harga * quantity)}
+                              </a>
                             </div>
-                            {/* <div className="text-xxs text-neutral-1 pl-1">
-                              x4
-                            </div> */}
+                            <div className="text-xxs pl-2">x{quantity}</div>
                           </div>
                         </div>
                       </div>
@@ -295,6 +339,15 @@ const ProductDetailPage = () => {
                           </button>
                         </div>
                       </section>
+                      <div className="flex gap-2">
+                        <Btn className="flex-1" variant="outline">
+                          <i className="bx bx-cart-add text-lg"></i> Keranjang
+                        </Btn>
+                        <Btn className="flex-1">
+                          Beli Sekarang{" "}
+                          <i className="bx bx-right-arrow-alt text-lg"></i>
+                        </Btn>
+                      </div>
                     </div>
                   </div>
                 </section>

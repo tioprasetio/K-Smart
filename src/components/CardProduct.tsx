@@ -1,8 +1,9 @@
 import { useNavigate } from "react-router";
 import Btn from "./Btn";
 import { useDarkMode } from "../context/DarkMode";
-import { useEffect, useState } from "react";
 import SkeletonCardProduct from "./SkeletonCardProduct";
+import { useProducts } from "../context/ProductContext";
+import { formatRupiah } from "../utils/formatCurrency";
 
 type CardProductProps = {
   name?: string;
@@ -21,11 +22,7 @@ type CardProductProps = {
 const CardProduct = (props: CardProductProps) => {
   const { isDarkMode } = useDarkMode();
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    setTimeout(() => setIsLoading(false), 1500); // Simulasi loading 1.5 detik
-  }, []);
+  const { isLoading } = useProducts();
 
   if (isLoading) {
     return <SkeletonCardProduct />;
@@ -44,7 +41,6 @@ const CardProduct = (props: CardProductProps) => {
     category,
     id,
   } = props;
-  // console.log('card product=',name);
 
   const productSlug = name?.toLowerCase().replace(/\s+/g, "-");
 
@@ -73,7 +69,6 @@ const CardProduct = (props: CardProductProps) => {
   };
   return (
     <>
-      {/* <!-- Card Produk 1 --> */}
       <div
         className={`${
           isDarkMode ? "bg-[#303030]" : "bg-white"
@@ -103,7 +98,7 @@ const CardProduct = (props: CardProductProps) => {
                     isDarkMode ? "text-[#f0f0f0]" : "text-[#353535]"
                   } text-base font-bold`}
                 >
-                  Rp{harga?.toLocaleString()}
+                  {formatRupiah(harga)}
                 </span>
                 <span className="text-[#353535] text-xs">&nbsp;/ pcs</span>
               </div>
