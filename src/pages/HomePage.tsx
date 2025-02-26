@@ -1,43 +1,52 @@
 import { Link } from "react-router";
+import { useEffect, useState, useMemo } from "react";
+
 import Banner from "../components/Banner";
 import CardProduct from "../components/CardProduct";
 import Category from "../components/Category";
 import NavbarComponent from "../components/Navbar";
-import { Product } from "../data/products";
 import Footer from "../components/Footer";
 import Copyright from "../components/Copyright";
 import Payment from "../components/Payment";
-import { useEffect, useState } from "react";
-import { getBestSellers, getProduct } from "../api/product/getProduct";
 import SearchBar from "../components/SearchBar";
+import SkeletonCardProduct from "../components/SkeletonCardProduct";
+import { getBestSellers, getProduct } from "../api/product/getProduct";
 import { useDarkMode } from "../context/DarkMode";
-
-// interface Product {
-//   id: string;
-//   name: { stringValue: string };
-//   email: { stringValue: string };
-// }
+import { Product } from "../data/products";
 
 const HomePage = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [bestSellers, setBestSellers] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { isDarkMode } = useDarkMode();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const allProducts = await getProduct();
-        const topProducts = await getBestSellers();
+        const [allProducts, topProducts] = await Promise.all([
+          getProduct(),
+          getBestSellers(),
+        ]);
 
         setProducts(allProducts);
         setBestSellers(topProducts);
       } catch (error) {
         console.error("Error fetching data:", error);
+      } finally {
+        setIsLoading(false); // Matikan loading setelah data diambil
       }
     };
 
     fetchData();
   }, []);
+
+  // Gunakan useMemo untuk menghindari re-renders yang tidak perlu
+  const displayedBestSellers = useMemo(
+    () => bestSellers.slice(0, 4),
+    [bestSellers]
+  );
+  const displayedProducts = useMemo(() => products.slice(0, 4), [products]);
+
   return (
     <div
       className={`${
@@ -82,9 +91,13 @@ const HomePage = () => {
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {/* bestSellers.slice(0, 2) untuk menampilkan 2 produk */}
-              {bestSellers.map((product) => (
-                <CardProduct key={product.id} {...product} />
-              ))}
+              {isLoading
+                ? Array.from({ length: 4 }).map((_, index) => (
+                    <SkeletonCardProduct key={index} />
+                  ))
+                : displayedBestSellers.map((product) => (
+                    <CardProduct key={product.id} {...product} />
+                  ))}
             </div>
           </div>
         </div>
@@ -107,9 +120,13 @@ const HomePage = () => {
               </button>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {products.slice(0, 4).map((product) => (
-                <CardProduct key={product.id} {...product} />
-              ))}
+              {isLoading
+                ? Array.from({ length: 4 }).map((_, index) => (
+                    <SkeletonCardProduct key={index} />
+                  ))
+                : displayedProducts.map((product) => (
+                    <CardProduct key={product.id} {...product} />
+                  ))}
             </div>
           </div>
         </div>

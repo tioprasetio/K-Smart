@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router";
 import Btn from "./Btn";
 import { useDarkMode } from "../context/DarkMode";
+import { useEffect, useState } from "react";
+import SkeletonCardProduct from "./SkeletonCardProduct";
 
 type CardProductProps = {
   name?: string;
@@ -18,6 +20,16 @@ type CardProductProps = {
 
 const CardProduct = (props: CardProductProps) => {
   const { isDarkMode } = useDarkMode();
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => setIsLoading(false), 1500); // Simulasi loading 1.5 detik
+  }, []);
+
+  if (isLoading) {
+    return <SkeletonCardProduct />;
+  }
 
   const {
     name = "Unknown",
@@ -34,7 +46,6 @@ const CardProduct = (props: CardProductProps) => {
   } = props;
   // console.log('card product=',name);
 
-  const navigate = useNavigate();
   const productSlug = name?.toLowerCase().replace(/\s+/g, "-");
 
   const isLoggedIn = localStorage.getItem("user"); // Asumsi user tersimpan di localStorage

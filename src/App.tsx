@@ -9,6 +9,7 @@ import AllProduct from "./pages/AllProducts";
 import LoginPage from "./pages/LoginPage";
 import { useEffect } from "react";
 import AboutUsPage from "./pages/AboutUsPage";
+import { ProductProvider } from "./context/ProductContext";
 // import AllProducts from "./pages/AllProducts";
 
 declare global {
@@ -42,27 +43,29 @@ function App() {
   }, [location]); // Akan berjalan setiap kali lokasi berubah
   return (
     <>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
+      <ProductProvider>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
 
-        <Route path="/best-sellers" element={<BestSellersPage />} />
+          <Route path="/best-sellers" element={<BestSellersPage />} />
 
-        <Route path="/all-product" element={<AllProduct />} />
+          <Route path="/all-product" element={<AllProduct />} />
 
-        <Route path="/category/:category" element={<CategoryPage />} />
+          <Route path="/category/:category" element={<CategoryPage />} />
 
-        <Route path="/login" element={<LoginPage />} />
+          <Route path="/login" element={<LoginPage />} />
 
-        <Route path="/about-us" element={<AboutUsPage />} />
+          <Route path="/about-us" element={<AboutUsPage />} />
 
-        {/* Dynamic Route */}
-        <Route path="/product/:productSlug" element={<ProductDetailPage />} />
+          {/* Dynamic Route */}
+          <Route path="/product/:productSlug" element={<ProductDetailPage />} />
 
-        {/* <Route path="/search-products" element={<AllProduct />} /> */}
+          {/* <Route path="/search-products" element={<AllProduct />} /> */}
 
-        {/* Fungsi untuk not found jika tidak ada routes */}
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
+          {/* Fungsi untuk not found jika tidak ada routes */}
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </ProductProvider>
     </>
   );
 }
