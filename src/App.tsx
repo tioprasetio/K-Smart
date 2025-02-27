@@ -10,6 +10,7 @@ import LoginPage from "./pages/LoginPage";
 import { useEffect } from "react";
 import AboutUsPage from "./pages/AboutUsPage";
 import { ProductProvider } from "./context/ProductContext";
+import CartPage from "./pages/CartPage";
 // import AllProducts from "./pages/AllProducts";
 
 declare global {
@@ -32,11 +33,6 @@ function App() {
         page_path: location.pathname,
         user_id: userEmail, // Kirim user_id ke Google Analytics
       });
-
-      console.log("Google Analytics Updated:", {
-        page_path: location.pathname,
-        user_id: userEmail,
-      });
     } else {
       console.warn("Google Analytics (gtag) belum dimuat.");
     }
@@ -56,6 +52,8 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
 
           <Route path="/about-us" element={<AboutUsPage />} />
+
+          <Route path="/cart" element={<CartPage />} />
 
           {/* Dynamic Route */}
           <Route path="/product/:productSlug" element={<ProductDetailPage />} />

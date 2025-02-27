@@ -1,124 +1,68 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router";
+import { useState } from "react";
+import { useCart } from "../context/CartContext"; // Import useCart
+import { useNavigate } from "react-router-dom";
+import { loginUser } from "../api/auth/authService";
 import { useDarkMode } from "../context/DarkMode";
 
-const LoginForm: React.FC = () => {
+const LoginForm = () => {
   const { isDarkMode } = useDarkMode();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>(
-    {}
-  );
+  const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { setUserEmail } = useCart(); // Ambil setUserEmail dari context
 
-  const validateEmail = (email: string) => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
-  };
-
-  const validatePassword = (password: string) => {
-    return password.length >= 6;
-  };
-
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setEmail(value);
-
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      email: validateEmail(value) ? "" : "Format email tidak valid.",
-    }));
-  };
-
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setPassword(value);
-
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      password: validatePassword(value)
-        ? ""
-        : "Password harus minimal 6 karakter.",
-    }));
-  };
-
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    try {
+      const user = await loginUser(email, password);
 
+      // Simpan user ke localStorage
+      localStorage.setItem("user", JSON.stringify(user));
 
-   if (!validateEmail(email) || !validatePassword(password)) {
-     setErrors({
-       email: validateEmail(email) ? "" : "Format email tidak valid.",
-       password: validatePassword(password)
-         ? ""
-         : "Password harus minimal 6 karakter.",
-     });
-     return;
-   }
+      // Perbarui userEmail di CartProvider
+      setUserEmail(user.email);
 
-    setErrors({});
-
-    // Simpan user ke localStorage (dummy authentication)
-    const userData = { email, password };
-    localStorage.setItem("user", JSON.stringify(userData));
-
-    // Kirim email ke Google Analytics
-    if (window.gtag) {
-      window.gtag("set", { user_id: email }); // Gunakan email sebagai user ID
-      window.gtag("config", "G-5B1S66Q62L", { user_id: email });
+      setError("");
+      navigate("/"); // Arahkan ke halaman utama
+    } catch (err) {
+      console.error("Login error:", err);
+      setError("Email atau password salah.");
     }
-
-    navigate("/");
   };
 
   return (
     <form onSubmit={handleLogin} className="space-y-4">
-      <div>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          required
-          onChange={handleEmailChange}
-          className={`${
-            isDarkMode
-              ? "bg-[#252525] text-[#f0f0f0]"
-              : "bg-white text-[#353535]"
-          } w-full p-2 border rounded`}
-        />
-        {errors.email && (
-          <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-        )}
-      </div>
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Email"
+        required
+        className={`w-full p-2 border rounded ${
+          isDarkMode ? "bg-[#252525] text-[#f0f0f0]" : "bg-white text-[#353535]"
+        }`}
+      />
 
-      <div>
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          required
-          onChange={handlePasswordChange}
-          className={`${
-            isDarkMode
-              ? "bg-[#252525] text-[#f0f0f0]"
-              : "bg-white text-[#353535]"
-          } w-full p-2 border rounded`}
-        />
-        {errors.password && (
-          <p className="text-red-500 text-sm mt-1">{errors.password}</p>
-        )}
-      </div>
+      <input
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="Password"
+        required
+        className={`w-full p-2 border rounded ${
+          isDarkMode ? "bg-[#252525] text-[#f0f0f0]" : "bg-white text-[#353535]"
+        }`}
+      />
+
       <button
         type="submit"
-        disabled={!email || !password || !!errors.email || !!errors.password}
-        className={`w-full p-2 rounded text-white ${
-          !email || !password || !!errors.email || !!errors.password
-            ? "bg-gray-400 cursor-not-allowed"
-            : "bg-[#28a154] hover:bg-[#167e3c] cursor-pointer"
-        }`}
+        className="w-full p-2 text-white rounded bg-[#28a154] hover:bg-[#167e3c] cursor-pointer"
       >
         Login
       </button>
+
+      {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
     </form>
   );
 };

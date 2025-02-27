@@ -18,9 +18,9 @@ const NavbarComponent = () => {
 
   // Fungsi Logout
   const handleLogout = () => {
-    localStorage.removeItem("user"); // Hapus data user dari localStorage
-    setIsLoggedIn(false); // Ubah state menjadi logout
-    navigate("/login"); // Arahkan kembali ke halaman login
+    localStorage.removeItem("user"); // Hapus user dari localStorage
+    setIsLoggedIn(false);
+    navigate("/login");
   };
 
   useEffect(() => {
@@ -56,30 +56,47 @@ const NavbarComponent = () => {
           </span>
         </Link>
 
-        <button
-          data-collapse-toggle="navbar-multi-level"
-          type="button"
-          className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-white rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:focus:ring-gray-200"
-          aria-controls="navbar-multi-level"
-          aria-expanded="false"
-        >
-          <span className="sr-only">Open main menu</span>
-          <svg
-            className="w-5 h-5"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 17 14"
+        {/* Cart Button + Hamburger Menu */}
+        <div className="flex items-center gap-3 md:hidden">
+          {/* Cart Button */}
+          <Link
+            to="/cart"
+            className={`${
+              isDarkMode
+                ? "text-[#f0f0f0] bg-[#303030]"
+                : "text-[#353535] bg-[#f0f0f0]"
+            } flex items-center justify-center cursor-pointer py-2 px-3 hover:text-white hover:bg-[#28a154] rounded-sm text-center`}
           >
-            <path
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M1 1h15M1 7h15M1 13h15"
-            />
-          </svg>
-        </button>
+            <i className="bx bxs-cart-add text-xl"></i>
+          </Link>
+
+          {/* Hamburger Menu */}
+          <button
+            data-collapse-toggle="navbar-multi-level"
+            type="button"
+            className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-white rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:focus:ring-gray-200"
+            aria-controls="navbar-multi-level"
+            aria-expanded="false"
+          >
+            <span className="sr-only">Open main menu</span>
+            <svg
+              className="w-5 h-5"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 17 14"
+            >
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M1 1h15M1 7h15M1 13h15"
+              />
+            </svg>
+          </button>
+        </div>
+
         <div
           className="hidden w-full md:block md:w-auto"
           id="navbar-multi-level"
@@ -89,7 +106,7 @@ const NavbarComponent = () => {
               isDarkMode
                 ? "text-[#f0f0f0] bg-[#292929] md:bg-[#140c00] border-[#03180b]"
                 : "text-[#353535] bg-gray-50 md:bg-white border-gray-100"
-            } flex flex-col md:flex-row md:items-center w-full md:w-auto space-y-2 md:space-y-0 md:space-x-2 font-medium p-4 md:p-0 mt-4 border rounded-lg md:mt-0 md:border-0`}
+            } flex text-base flex-col md:flex-row md:items-center w-full md:w-auto space-y-2 md:space-y-0 md:space-x-2 font-medium p-4 md:p-0 mt-4 border rounded-lg md:mt-0 md:border-0`}
           >
             <li>
               <Link
@@ -145,7 +162,7 @@ const NavbarComponent = () => {
                   isDarkMode
                     ? "text-[#f0f0f0] bg-[#303030]"
                     : "text-[#353535] bg-[#f0f0f0]"
-                } cursor-pointer block py-2 px-3 hover:text-white w-full md:w-auto hover:bg-[#28a154] rounded-sm`}
+                } cursor-pointer block py-2 px-3 text-center hover:text-white w-full md:w-auto hover:bg-[#28a154] rounded-sm`}
               >
                 {isDarkMode ? (
                   <i className="bx bxs-sun"></i>
@@ -153,6 +170,18 @@ const NavbarComponent = () => {
                   <i className="bx bxs-moon"></i>
                 )}
               </button>
+            </li>
+            <li>
+              <Link
+                to="/cart"
+                className={`${
+                  isDarkMode
+                    ? "text-[#f0f0f0] bg-[#303030]"
+                    : "text-[#353535] bg-[#f0f0f0]"
+                } hidden cursor-pointer md:block py-2 px-3 hover:text-white w-full md:w-auto hover:bg-[#28a154] rounded-sm text-center`}
+              >
+                <i className="bx bxs-cart-add"></i>
+              </Link>
             </li>
           </ul>
         </div>

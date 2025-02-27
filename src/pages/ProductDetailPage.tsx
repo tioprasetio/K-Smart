@@ -1,4 +1,4 @@
-import { useLocation } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 import NavbarComponent from "../components/Navbar";
 import Chatbot from "../components/Chatbot";
 import { useDarkMode } from "../context/DarkMode";
@@ -6,11 +6,15 @@ import PromoProduct from "../components/PromoProduct";
 import { useState } from "react";
 import Btn from "../components/Btn";
 import { formatRupiah } from "../utils/formatCurrency";
+import { useCart } from "../context/CartContext";
+import Swal from "sweetalert2";
 
 const ProductDetailPage = () => {
   // const params = useParams<{ productSlug: string }>();
   const { isDarkMode } = useDarkMode();
   const location = useLocation();
+  const { addToCart } = useCart();
+  const navigate = useNavigate();
 
   const product = location.state;
 
@@ -28,6 +32,28 @@ const ProductDetailPage = () => {
       setQuantity((prevQuantity) => prevQuantity - 1);
     }
   };
+
+  // Fungsi untuk menambahkan produk ke keranjang
+  const handleAddToCart = () => {
+    const productToAdd = {
+      id: product.id,
+      name: product.name,
+      picture: product.picture,
+      harga: product.harga,
+      quantity: quantity,
+    };
+    console.log("Menambahkan ke keranjang:", productToAdd);
+    addToCart(productToAdd);
+     Swal.fire({
+       title: "Berhasil!",
+       text: "Produk telah ditambahkan ke keranjang!",
+       icon: "success",
+       showConfirmButton: false, // Supaya langsung otomatis hilang
+       timer: 2000, // Hilang dalam 2 detik
+     }).then(() => {
+       navigate("/cart"); // Pindah ke halaman cart setelah alert selesai
+     });
+  };
   return (
     <>
       <NavbarComponent />
@@ -36,7 +62,7 @@ const ProductDetailPage = () => {
           <div
             className={`${
               isDarkMode ? "bg-[#140c00]" : "bg-[#f4f6f9]"
-            } p-6 pt-24 sm:pt-28 w-full min-h-screen`}
+            } p-6 pt-24 sm:pt-28 pb-24 sm:pb-28 w-full min-h-screen`}
           >
             <div className="container mx-auto">
               <div className="grid grid-cols-1 md:grid-cols-2 md:gap-3 xl:gap-4 md:pt-5">
@@ -109,8 +135,16 @@ const ProductDetailPage = () => {
                         </button>
                       </div>
                     </section>
-                    <div className="flex gap-2">
-                      <Btn className="flex-1" variant="outline">
+                    <div
+                      className={`${
+                        isDarkMode ? "bg-[#303030]" : "bg-[#ffffff]"
+                      } fixed gap-4 bottom-0 left-0 w-full p-4 shadow-2xl flex justify-between items-center z-50`}
+                    >
+                      <Btn
+                        className="flex-1"
+                        variant="outline"
+                        onClick={handleAddToCart}
+                      >
                         <i className="bx bx-cart-add text-lg"></i> Keranjang
                       </Btn>
                       <Btn className="flex-1">
@@ -339,8 +373,16 @@ const ProductDetailPage = () => {
                           </button>
                         </div>
                       </section>
-                      <div className="flex gap-2">
-                        <Btn className="flex-1" variant="outline">
+                      <div
+                        className={`${
+                          isDarkMode ? "bg-[#303030]" : "bg-[#ffffff]"
+                        } fixed gap-4 bottom-0 left-0 w-full p-4 shadow-2xl flex justify-between items-center z-50`}
+                      >
+                        <Btn
+                          className="flex-1"
+                          variant="outline"
+                          onClick={handleAddToCart}
+                        >
                           <i className="bx bx-cart-add text-lg"></i> Keranjang
                         </Btn>
                         <Btn className="flex-1">
