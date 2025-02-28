@@ -41,18 +41,19 @@ const ProductDetailPage = () => {
       picture: product.picture,
       harga: product.harga,
       quantity: quantity,
+      bv: product.bv,
     };
-    console.log("Menambahkan ke keranjang:", productToAdd);
+
     addToCart(productToAdd);
-     Swal.fire({
-       title: "Berhasil!",
-       text: "Produk telah ditambahkan ke keranjang!",
-       icon: "success",
-       showConfirmButton: false, // Supaya langsung otomatis hilang
-       timer: 2000, // Hilang dalam 2 detik
-     }).then(() => {
-       navigate("/cart"); // Pindah ke halaman cart setelah alert selesai
-     });
+    Swal.fire({
+      title: "Berhasil!",
+      text: "Produk telah ditambahkan ke keranjang!",
+      icon: "success",
+      showConfirmButton: false, // Supaya langsung otomatis hilang
+      timer: 2000, // Hilang dalam 2 detik
+    }).then(() => {
+      navigate("/cart"); // Pindah ke halaman cart setelah alert selesai
+    });
   };
   return (
     <>
@@ -102,6 +103,10 @@ const ProductDetailPage = () => {
                     >
                       <div className="p6">Informasi Produk</div>
                       <hr className="mt-4 border-t border-gray-300" />
+                      <div className="flex items-center justify-between pt-4">
+                        <div>BV</div>
+                        <div>{product.bv} gr</div>
+                      </div>
                       <div className="flex items-center justify-between pt-4">
                         <div>Berat Pengiriman</div>
                         <div>{product.beratPengiriman} gr</div>
@@ -340,6 +345,10 @@ const ProductDetailPage = () => {
                       >
                         <div className="p6">Informasi Produk</div>
                         <hr className="mt-4 border-t border-gray-300" />
+                        <div className="flex items-center justify-between pt-4">
+                          <div>BV</div>
+                          <div>{product.bv} gr</div>
+                        </div>
                         <div className="flex items-center justify-between pt-4">
                           <div>Berat Pengiriman</div>
                           <div>{product.beratPengiriman} gr</div>

@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import AboutUsPage from "./pages/AboutUsPage";
 import { ProductProvider } from "./context/ProductContext";
 import CartPage from "./pages/CartPage";
+import CheckoutPage from "./pages/CheckoutPage";
 // import AllProducts from "./pages/AllProducts";
 
 declare global {
@@ -54,6 +55,8 @@ function App() {
           <Route path="/about-us" element={<AboutUsPage />} />
 
           <Route path="/cart" element={<CartPage />} />
+
+          <Route path="/checkout" element={<CheckoutPage />} />
 
           {/* Dynamic Route */}
           <Route path="/product/:productSlug" element={<ProductDetailPage />} />

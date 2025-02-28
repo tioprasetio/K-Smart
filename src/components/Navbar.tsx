@@ -3,10 +3,12 @@ import { Link, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import "flowbite";
 import { useDarkMode } from "../context/DarkMode";
+import { useCart } from "../context/CartContext";
 
 const NavbarComponent = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
+  const { cart } = useCart();
 
   const { isDarkMode, setIsDarkMode } = useDarkMode();
 
@@ -30,6 +32,8 @@ const NavbarComponent = () => {
       }
     });
   }, []);
+
+  const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
     <nav
@@ -68,6 +72,7 @@ const NavbarComponent = () => {
             } flex items-center justify-center cursor-pointer py-2 px-3 hover:text-white hover:bg-[#28a154] rounded-sm text-center`}
           >
             <i className="bx bxs-cart-add text-xl"></i>
+            {totalItems > 0 ? `(${totalItems})` : ""}
           </Link>
 
           {/* Hamburger Menu */}
@@ -181,6 +186,7 @@ const NavbarComponent = () => {
                 } hidden cursor-pointer md:block py-2 px-3 hover:text-white w-full md:w-auto hover:bg-[#28a154] rounded-sm text-center`}
               >
                 <i className="bx bxs-cart-add"></i>
+                {totalItems > 0 ? `(${totalItems})` : ""}
               </Link>
             </li>
           </ul>

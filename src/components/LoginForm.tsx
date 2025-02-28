@@ -3,6 +3,8 @@ import { useCart } from "../context/CartContext"; // Import useCart
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../api/auth/authService";
 import { useDarkMode } from "../context/DarkMode";
+import { db } from "../config/Firebase"; // Import Firestore
+import { doc, getDoc, setDoc } from "firebase/firestore"; // Import Firestore functions
 
 const LoginForm = () => {
   const { isDarkMode } = useDarkMode();
@@ -12,19 +14,40 @@ const LoginForm = () => {
   const navigate = useNavigate();
   const { setUserEmail } = useCart(); // Ambil setUserEmail dari context
 
+  // 🔥 Fungsi untuk menyimpan user ke Firestore jika belum ada
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const saveUserToFirestore = async (user: any) => {
+    try {
+      const userRef = doc(db, "users", user.uid); // Dokumen berdasarkan UID
+      const userSnap = await getDoc(userRef);
+
+      if (!userSnap.exists()) {
+        // Jika user belum ada, tambahkan ke Firestore
+        await setDoc(userRef, {
+          name: user.displayName || "User", // Nama default jika tidak ada
+          email: user.email,
+          BV: 0, // BV default 0
+        });
+        console.log("User baru disimpan ke Firestore");
+      }
+    } catch (error) {
+      console.error("Error menyimpan user ke Firestore:", error);
+    }
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const user = await loginUser(email, password);
+      const user = await loginUser(email, password); // Login ke Firebase
 
-      // Simpan user ke localStorage
-      localStorage.setItem("user", JSON.stringify(user));
+      if (user) {
+        await saveUserToFirestore(user); // 🔥 Simpan ke Firestore jika belum ada
 
-      // Perbarui userEmail di CartProvider
-      setUserEmail(user.email);
-
-      setError("");
-      navigate("/"); // Arahkan ke halaman utama
+        // Simpan ke localStorage & pindah ke halaman utama
+        localStorage.setItem("user", JSON.stringify(user));
+        setUserEmail(user.email);
+        navigate("/");
+      }
     } catch (err) {
       console.error("Login error:", err);
       setError("Email atau password salah.");

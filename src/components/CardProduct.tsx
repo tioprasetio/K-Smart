@@ -16,6 +16,7 @@ type CardProductProps = {
   pemesananMin: number;
   deskripsi: string;
   category: string;
+  bv: number;
   id: number;
 };
 
@@ -39,6 +40,7 @@ const CardProduct = (props: CardProductProps) => {
     pemesananMin,
     deskripsi,
     category,
+    bv,
     id,
   } = props;
 
@@ -63,6 +65,7 @@ const CardProduct = (props: CardProductProps) => {
           pemesananMin,
           deskripsi,
           category,
+          bv,
         },
       });
     }

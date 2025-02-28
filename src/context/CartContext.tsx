@@ -12,6 +12,7 @@ interface Product {
   picture: string;
   harga: number;
   quantity: number;
+  bv: number;
 }
 
 interface CartContextType {
@@ -20,6 +21,7 @@ interface CartContextType {
   removeFromCart: (id: number) => void;
   setCart: React.Dispatch<React.SetStateAction<Product[]>>;
   setUserEmail: (email: string | null) => void;
+  clearCheckedOutItems: (selectedProducts: Product[]) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -99,9 +101,25 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     setCart((prevCart) => prevCart.filter((item) => item.id !== id));
   };
 
+  // 🔥 Fungsi untuk menghapus produk yang sudah dibeli
+  const clearCheckedOutItems = (selectedProducts: Product[]) => {
+    setCart((prevCart) =>
+      prevCart.filter(
+        (item) => !selectedProducts.some((selected) => selected.id === item.id)
+      )
+    );
+
+    if (userEmail) {
+      const updatedCart = cart.filter(
+        (item) => !selectedProducts.some((selected) => selected.id === item.id)
+      );
+      localStorage.setItem(`cart_${userEmail}`, JSON.stringify(updatedCart));
+    }
+  };
+
   return (
     <CartContext.Provider
-      value={{ cart, addToCart, removeFromCart, setCart, setUserEmail }}
+      value={{ cart, addToCart, removeFromCart, setCart, setUserEmail, clearCheckedOutItems }}
     >
       {children}
     </CartContext.Provider>

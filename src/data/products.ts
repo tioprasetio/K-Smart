@@ -9,6 +9,7 @@ export type Product = {
   pemesananMin: number;
   deskripsi: string;
   category: string;
+  bv: number;
   id: number;
 };
 

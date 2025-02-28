@@ -3,6 +3,8 @@ import { useCart } from "../context/CartContext";
 import NavbarComponent from "../components/Navbar";
 import { formatRupiah } from "../utils/formatCurrency";
 import { useDarkMode } from "../context/DarkMode";
+import { useCheckout } from "../context/CheckoutContext"; // Import Checkout Context
+import { useNavigate } from "react-router"; // Untuk pindah ke halaman checkout
 import Btn from "../components/Btn";
 import Swal from "sweetalert2";
 
@@ -10,6 +12,8 @@ const CartPage = () => {
   const { isDarkMode } = useDarkMode();
   const { cart, setCart, removeFromCart } = useCart();
   const [selectedItems, setSelectedItems] = useState<number[]>([]); // Simpan item yang dicentang
+  const { setSelectedProducts } = useCheckout(); // Ambil function dari context
+  const navigate = useNavigate(); // Untuk pindah ke halaman checkout
 
   // Fungsi untuk toggle checkbox
   const toggleSelect = (id: number) => {
@@ -75,6 +79,28 @@ const CartPage = () => {
 
   const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
 
+  const totalBV = cart
+    .filter((item) => selectedItems.includes(item.id)) // Ambil hanya item yang dipilih
+    .reduce((total, item) => total + item.bv * item.quantity, 0);
+
+  const handleCheckout = () => {
+    const selectedItemsData = cart.filter((item) =>
+      selectedItems.includes(item.id)
+    );
+
+    if (selectedItemsData.length === 0) {
+      Swal.fire(
+        "Oops!",
+        "Pilih minimal satu produk untuk checkout.",
+        "warning"
+      );
+      return;
+    }
+
+    setSelectedProducts(selectedItemsData); // Simpan data ke context
+    navigate("/checkout"); // Pindah ke halaman checkout
+  };
+
   return (
     <>
       <NavbarComponent />
@@ -118,10 +144,13 @@ const CartPage = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col gap-1">
                     <a
-                      className="inline-block font-medium w-32 truncate"
+                      className="inline-block font-medium w-32 md:w-64 truncate"
                       href="#"
                     >
                       {item.name}
+                    </a>
+                    <a className="inline-block font-semibold" href="#">
+                      BV: {item.bv}
                     </a>
                     <a className="inline-block font-semibold" href="#">
                       {formatRupiah(item.harga * item.quantity)}
@@ -176,14 +205,32 @@ const CartPage = () => {
             </div>
 
             {/* Total Harga */}
-            <h2 className={`${isDarkMode ? "text-[#f0f0f0]" : "text-[#353535]"} text-lg font-semibold`}>
-              Total: {formatRupiah(totalHarga)}
-            </h2>
+            <div className="flex flex-col gap-2">
+              <h2
+                className={`${
+                  isDarkMode ? "text-[#f0f0f0]" : "text-[#353535]"
+                } text-lg font-semibold`}
+              >
+                Total: {formatRupiah(totalHarga)}
+              </h2>
+              <h2
+                className={`${
+                  isDarkMode ? "text-[#f0f0f0]" : "text-[#353535]"
+                } text-lg font-semibold`}
+              >
+                BV Didapat: {totalBV}
+              </h2>
+            </div>
           </div>
 
           {/* Tombol Checkout di Bawah */}
           <Btn
-            className="px-4 py-2 font-semibold rounded w-full"
+            onClick={handleCheckout}
+            className={`${
+              selectedItems.length === 0
+                ? "bg-gray-400 text-gray-600 cursor-not-allowed"
+                : "bg-[#28a154] text-white"
+            } px-4 py-2 font-semibold rounded w-full`}
             disabled={selectedItems.length === 0}
           >
             Checkout ({selectedItems.length})

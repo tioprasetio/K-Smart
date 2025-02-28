@@ -6,14 +6,17 @@ import App from "./App.tsx";
 import "flowbite";
 import DarkModeContextProvider from "./context/DarkMode.tsx";
 import { CartProvider } from "./context/CartContext.tsx";
+import { CheckoutProvider } from "./context/CheckoutContext.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <DarkModeContextProvider>
       <CartProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
+        <CheckoutProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </CheckoutProvider>
       </CartProvider>
     </DarkModeContextProvider>
   </StrictMode>

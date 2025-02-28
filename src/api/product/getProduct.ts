@@ -17,6 +17,7 @@ export const getProduct = async (): Promise<Product[]> => {
       pemesananMin: parseInt(doc.fields.pemesananMin.integerValue, 10),
       deskripsi: doc.fields.deskripsi.stringValue,
       category: doc.fields.category.stringValue,
+      bv: parseInt(doc.fields.bv.integerValue, 10),
     }));
   } catch (error) {
     console.error("Error fetching products:", error);
@@ -40,6 +41,7 @@ export const getBestSellers = async (): Promise<Product[]> => {
       pemesananMin: parseInt(doc.fields.pemesananMin.integerValue, 10),
       deskripsi: doc.fields.deskripsi.stringValue,
       category: doc.fields.category.stringValue,
+      bv: parseInt(doc.fields.bv.integerValue, 10),
     }));
   } catch (error) {
     console.error("Error fetching best sellers:", error);
