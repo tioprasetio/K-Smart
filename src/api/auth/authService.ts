@@ -8,7 +8,7 @@ import {
 
 // 🔹 Interface untuk hasil autentikasi
 interface AuthResponse {
-  user: User;
+  user: Pick<User, "uid" | "email">; // Hanya menyimpan data yang aman
 }
 
 // 🔹 Fungsi Registrasi
@@ -21,7 +21,15 @@ export const registerUser = async (
     email,
     password
   );
-  return userCredential;
+
+  // Simpan hanya uid dan email
+  const safeUser = {
+    uid: userCredential.user.uid,
+    email: userCredential.user.email,
+  };
+
+  localStorage.setItem("user", JSON.stringify(safeUser));
+  return { user: safeUser };
 };
 
 // 🔹 Fungsi Login
@@ -32,14 +40,33 @@ export const loginUser = async (email: string, password: string) => {
       email,
       password
     );
-    return userCredential.user; // Mengembalikan user yang berhasil login
+
+    // Simpan hanya uid dan email
+    const safeUser = {
+      uid: userCredential.user.uid,
+      email: userCredential.user.email,
+    };
+
+    localStorage.setItem("user", JSON.stringify(safeUser));
+
+    // Simpan token sementara di sessionStorage (jangan di localStorage)
+    sessionStorage.setItem(
+      "accessToken",
+      await userCredential.user.getIdToken()
+    );
+
+    return safeUser;
   } catch (error) {
     console.error("Login error:", error);
-    throw new Error("Email atau password salah."); // Pastikan error dilempar untuk ditangkap di LoginForm.tsx
+    throw new Error("Email atau password salah.");
   }
 };
 
 // 🔹 Fungsi Logout
 export const logoutUser = async (): Promise<void> => {
   await signOut(auth);
+
+  // Hapus data dari localStorage dan sessionStorage saat logout
+  localStorage.removeItem("user");
+  sessionStorage.removeItem("accessToken");
 };

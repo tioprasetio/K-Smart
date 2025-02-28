@@ -19,7 +19,7 @@ interface CartContextType {
   addToCart: (product: Product) => void;
   removeFromCart: (id: number) => void;
   setCart: React.Dispatch<React.SetStateAction<Product[]>>;
-  setUserEmail: (email: string | null) => void; // Tambahkan fungsi untuk mengupdate userEmail
+  setUserEmail: (email: string | null) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -41,17 +41,27 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
     if (email) {
       const savedCart = localStorage.getItem(`cart_${email}`);
-      setCart(savedCart ? JSON.parse(savedCart) : []);
+      if (savedCart) {
+        const parsedCart = JSON.parse(savedCart);
+        setCart(parsedCart);
+      } else {
+        setCart([]); // Reset cart jika tidak ada data yang tersimpan
+      }
     } else {
       setCart([]); // Kosongkan cart jika user logout
     }
   }, []);
 
-  // Ambil cart dari localStorage setiap kali userEmail berubah (misal setelah login)
+  // Reset cart dan ambil cart baru dari localStorage setiap kali userEmail berubah
   useEffect(() => {
     if (userEmail) {
       const savedCart = localStorage.getItem(`cart_${userEmail}`);
-      setCart(savedCart ? JSON.parse(savedCart) : []);
+      if (savedCart) {
+        const parsedCart = JSON.parse(savedCart);
+        setCart(parsedCart);
+      } else {
+        setCart([]); // Reset cart jika tidak ada data yang tersimpan
+      }
     } else {
       setCart([]); // Kosongkan cart jika user logout
     }
@@ -64,6 +74,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [cart, userEmail]);
 
+  // Fungsi untuk menambahkan produk ke cart
   const addToCart = (product: Product) => {
     setCart((prevCart) => {
       const existingProduct = prevCart.find((item) => item.id === product.id);
@@ -83,16 +94,14 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
+  // Fungsi untuk menghapus produk dari cart
   const removeFromCart = (id: number) => {
-    setCart((prevCart) => {
-      const newCart = prevCart.filter((item) => item.id !== id);
-      return newCart;
-    });
+    setCart((prevCart) => prevCart.filter((item) => item.id !== id));
   };
 
   return (
     <CartContext.Provider
-      value={{ cart, addToCart, removeFromCart, setCart, setUserEmail }} // Sertakan setUserEmail di value
+      value={{ cart, addToCart, removeFromCart, setCart, setUserEmail }}
     >
       {children}
     </CartContext.Provider>
