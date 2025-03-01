@@ -28,7 +28,6 @@ const LoginForm = () => {
           email: user.email,
           BV: 0, // BV default 0
         });
-        console.log("User baru disimpan ke Firestore");
       }
     } catch (error) {
       console.error("Error menyimpan user ke Firestore:", error);

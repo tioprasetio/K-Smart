@@ -67,6 +67,16 @@ export const logoutUser = async (): Promise<void> => {
   await signOut(auth);
 
   // Hapus data dari localStorage dan sessionStorage saat logout
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const userEmail = user?.email;
+
+  if (userEmail) {
+    // Hapus key cart_${userEmail} dari localStorage
+    localStorage.removeItem(`cart_${userEmail}`);
+  }
+
   localStorage.removeItem("user");
   sessionStorage.removeItem("accessToken");
+
+  window.location.assign("/login");
 };

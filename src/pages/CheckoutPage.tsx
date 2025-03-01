@@ -175,13 +175,17 @@ const CheckoutPage = () => {
         <div className="flex gap-2">
           <Btn
             onClick={handleCancelCheckout}
-            className="bg-red-500 text-white px-4 py-2 font-semibold rounded w-1/2"
+            className={`${
+              isDarkMode ? "bg-[#cb2525] text-white" : "bg-[#cb2525] text-white"
+            } px-4 py-2 font-semibold rounded w-1/2`}
           >
             Batal
           </Btn>
           <Btn
             onClick={handlePayment}
-            className="bg-green-500 text-white px-4 py-2 font-semibold rounded w-1/2"
+            className={`${
+              isDarkMode ? "bg-[#28a154] text-white" : "bg-[#28a154] text-white"
+            } px-4 py-2 font-semibold rounded w-1/2`}
           >
             Bayar Sekarang
           </Btn>

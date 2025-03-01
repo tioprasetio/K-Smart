@@ -11,6 +11,7 @@ import Swal from "sweetalert2";
 
 const ProductDetailPage = () => {
   // const params = useParams<{ productSlug: string }>();
+  const isLoggedIn = localStorage.getItem("user");
   const { isDarkMode } = useDarkMode();
   const location = useLocation();
   const { addToCart } = useCart();
@@ -35,25 +36,34 @@ const ProductDetailPage = () => {
 
   // Fungsi untuk menambahkan produk ke keranjang
   const handleAddToCart = () => {
-    const productToAdd = {
-      id: product.id,
-      name: product.name,
-      picture: product.picture,
-      harga: product.harga,
-      quantity: quantity,
-      bv: product.bv,
-    };
+    if (!isLoggedIn) {
+      Swal.fire({
+        title: "Oops...",
+        text: "Anda harus login terlebih dahulu!",
+        icon: "error",
+      });
+      navigate("/login");
+    } else {
+      const productToAdd = {
+        id: product.id,
+        name: product.name,
+        picture: product.picture,
+        harga: product.harga,
+        quantity: quantity,
+        bv: product.bv,
+      };
 
-    addToCart(productToAdd);
-    Swal.fire({
-      title: "Berhasil!",
-      text: "Produk telah ditambahkan ke keranjang!",
-      icon: "success",
-      showConfirmButton: false, // Supaya langsung otomatis hilang
-      timer: 2000, // Hilang dalam 2 detik
-    }).then(() => {
-      navigate("/cart"); // Pindah ke halaman cart setelah alert selesai
-    });
+      addToCart(productToAdd);
+      Swal.fire({
+        title: "Berhasil!",
+        text: "Produk telah ditambahkan ke keranjang!",
+        icon: "success",
+        showConfirmButton: false, // Supaya langsung otomatis hilang
+        timer: 1500, // Hilang dalam 1,5 detik
+      }).then(() => {
+        navigate("/cart"); // Pindah ke halaman cart setelah alert selesai
+      });
+    }
   };
   return (
     <>

@@ -1,14 +1,14 @@
 import "flowbite/dist/flowbite.min.js";
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
 import { useEffect, useState } from "react";
 import "flowbite";
 import { useDarkMode } from "../context/DarkMode";
 import { useCart } from "../context/CartContext";
+import { logoutUser } from "../api/auth/authService";
 
 const NavbarComponent = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const navigate = useNavigate();
-  const { cart } = useCart();
+  const { cart, clearCart } = useCart();
 
   const { isDarkMode, setIsDarkMode } = useDarkMode();
 
@@ -19,10 +19,15 @@ const NavbarComponent = () => {
   }, []);
 
   // Fungsi Logout
-  const handleLogout = () => {
-    localStorage.removeItem("user"); // Hapus user dari localStorage
-    setIsLoggedIn(false);
-    navigate("/login");
+  const handleLogout = async () => {
+    try {
+      await logoutUser(); // Panggil fungsi logout dari authService
+      clearCart(); // Kosongkan state cart
+      setIsLoggedIn(false);
+      window.location.assign("/login");
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
   };
 
   useEffect(() => {
@@ -79,7 +84,11 @@ const NavbarComponent = () => {
           <button
             data-collapse-toggle="navbar-multi-level"
             type="button"
-            className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-white rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:focus:ring-gray-200"
+            className={`${
+              isDarkMode
+                ? "text-[#f0f0f0] bg-[#303030]"
+                : "text-[#353535] bg-[#f0f0f0]"
+            } flex items-center justify-center cursor-pointer py-2 px-3 hover:text-white hover:bg-[#28a154] rounded-sm text-center`}
             aria-controls="navbar-multi-level"
             aria-expanded="false"
           >
@@ -145,7 +154,11 @@ const NavbarComponent = () => {
               {isLoggedIn ? (
                 <button
                   onClick={handleLogout}
-                  className="cursor-pointer w-full md:w-auto text-white bg-red-500 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 text-center"
+                  className={`${
+                    isDarkMode
+                      ? "text-[#f0f0f0] bg-[#cb2525]"
+                      : "text-[#f0f0f0] bg-[#cb2525]"
+                  } cursor-pointer block py-2 px-3 text-center hover:text-white w-full md:w-auto hover:bg-[#cb2525] rounded-sm`}
                 >
                   Logout
                 </button>
@@ -153,7 +166,11 @@ const NavbarComponent = () => {
                 <Link to="/login" className="w-full md:w-auto block">
                   <button
                     type="button"
-                    className="cursor-pointer w-full md:w-auto text-white bg-[#28a154] hover:bg-[#167e3c] focus:ring-4 focus:outline-none focus:ring-[#3ab065] font-medium rounded-lg text-sm px-4 py-2 text-center"
+                    className={`${
+                      isDarkMode
+                        ? "text-[#f0f0f0] bg-[#28a154]"
+                        : "text-[#f0f0f0] bg-[#28a154]"
+                    } cursor-pointer block py-2 px-3 text-center hover:text-white w-full md:w-auto hover:bg-[#167e3c] rounded-sm`}
                   >
                     Login
                   </button>

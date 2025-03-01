@@ -10,7 +10,7 @@ import Swal from "sweetalert2";
 
 const CartPage = () => {
   const { isDarkMode } = useDarkMode();
-  const { cart, setCart, removeFromCart } = useCart();
+  const { cart, setCart, removeFromCart, loading } = useCart();
   const [selectedItems, setSelectedItems] = useState<number[]>([]); // Simpan item yang dicentang
   const { setSelectedProducts } = useCheckout(); // Ambil function dari context
   const navigate = useNavigate(); // Untuk pindah ke halaman checkout
@@ -114,6 +114,8 @@ const CartPage = () => {
         <h1 className="text-2xl font-bold mb-4">
           Keranjang Saya {totalItems > 0 ? `(${totalItems})` : ""}
         </h1>
+
+        {loading && <div>Loading...</div>}
 
         {cart.length === 0 ? (
           <p>Keranjang masih kosong.</p>
@@ -228,7 +230,7 @@ const CartPage = () => {
             onClick={handleCheckout}
             className={`${
               selectedItems.length === 0
-                ? "bg-gray-400 text-gray-600 cursor-not-allowed"
+                ? "bg-[#28a154] text-white cursor-not-allowed"
                 : "bg-[#28a154] text-white"
             } px-4 py-2 font-semibold rounded w-full`}
             disabled={selectedItems.length === 0}
