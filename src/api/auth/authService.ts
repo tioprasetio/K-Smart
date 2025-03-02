@@ -3,12 +3,14 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  User,
 } from "firebase/auth";
 
 // 🔹 Interface untuk hasil autentikasi
 interface AuthResponse {
-  user: Pick<User, "uid" | "email">; // Hanya menyimpan data yang aman
+  user: {
+    uid: string;
+    email: string | null; // Email bisa null jika tidak tersedia
+  };
 }
 
 // 🔹 Fungsi Registrasi

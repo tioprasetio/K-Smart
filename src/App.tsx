@@ -6,12 +6,12 @@ import BestSellersPage from "./pages/BestSellerPage";
 // import NewProduct from "./pages/NewProduct";
 import CategoryPage from "./pages/CategoryPage";
 import AllProduct from "./pages/AllProducts";
-import LoginPage from "./pages/LoginPage";
 import { useEffect } from "react";
 import AboutUsPage from "./pages/AboutUsPage";
 import { ProductProvider } from "./context/ProductContext";
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
+import AuthPage from "./pages/AuthPage";
 // import AllProducts from "./pages/AllProducts";
 
 declare global {
@@ -50,7 +50,7 @@ function App() {
 
           <Route path="/category/:category" element={<CategoryPage />} />
 
-          <Route path="/login" element={<LoginPage />} />
+          <Route path="/login" element={<AuthPage />} />
 
           <Route path="/about-us" element={<AboutUsPage />} />
 

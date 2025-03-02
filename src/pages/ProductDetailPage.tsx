@@ -357,7 +357,7 @@ const ProductDetailPage = () => {
                         <hr className="mt-4 border-t border-gray-300" />
                         <div className="flex items-center justify-between pt-4">
                           <div>BV</div>
-                          <div>{product.bv} gr</div>
+                          <div>{product.bv} BV</div>
                         </div>
                         <div className="flex items-center justify-between pt-4">
                           <div>Berat Pengiriman</div>

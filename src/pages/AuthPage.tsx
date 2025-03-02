@@ -1,10 +1,10 @@
 import React from "react";
-import LoginForm from "../components/LoginForm";
+import AuthForm from "../components/AuthForm";
 import { Link } from "react-router";
 import { useDarkMode } from "../context/DarkMode";
 import NavbarComponent from "../components/Navbar";
 
-const LoginPage: React.FC = () => {
+const AuthPage: React.FC = () => {
   const { isDarkMode } = useDarkMode();
   return (
     <>
@@ -29,11 +29,11 @@ const LoginPage: React.FC = () => {
             <span className={`${isDarkMode ? "text-[#f0f0f0]" : "text-[#353535]"} inline-block`}>Login K-Smart</span>
           </Link>
         </div>
-        <LoginForm />
+        <AuthForm />
       </div>
     </div>
     </>
   );
 };
 
-export default LoginPage;
+export default AuthPage;

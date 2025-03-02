@@ -152,7 +152,7 @@ const CartPage = () => {
                       {item.name}
                     </a>
                     <a className="inline-block font-semibold" href="#">
-                      BV: {item.bv}
+                      BV: {item.bv * item.quantity}
                     </a>
                     <a className="inline-block font-semibold" href="#">
                       {formatRupiah(item.harga * item.quantity)}
