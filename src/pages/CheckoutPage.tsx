@@ -442,7 +442,7 @@ const CheckoutPage = () => {
                 if (method) handleSelectPaymentMethod(method);
               }}
             >
-              <option value="">Pilih Metode Pengiriman</option>
+              <option value="">Pilih Metode Pembayaran</option>
               {paymentMethods.map((method, index) => (
                 <option key={index} value={method.name}>
                   {method.name} - {formatRupiah(method.rekening)}
