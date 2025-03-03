@@ -5,6 +5,7 @@ import "flowbite";
 import { useDarkMode } from "../context/DarkMode";
 import { useCart } from "../context/CartContext";
 import { logoutUser } from "../api/auth/authService";
+import Swal from "sweetalert2";
 
 const NavbarComponent = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -20,13 +21,31 @@ const NavbarComponent = () => {
 
   // Fungsi Logout
   const handleLogout = async () => {
-    try {
-      await logoutUser(); // Panggil fungsi logout dari authService
-      clearCart(); // Kosongkan state cart
-      setIsLoggedIn(false);
-      window.location.assign("/login");
-    } catch (error) {
-      console.error("Logout error:", error);
+    const result = await Swal.fire({
+      title: "Keluar?",
+      text: "Ingin keluar dari akun?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Ya, keluar!",
+      cancelButtonText: "Batal",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await logoutUser(); // Panggil fungsi logout dari authService
+        clearCart(); // Kosongkan state cart
+        setIsLoggedIn(false);
+        window.location.assign("/login"); // Redirect ke halaman login
+      } catch (error) {
+        console.error("Logout error:", error);
+        Swal.fire({
+          title: "Error!",
+          text: "Gagal melakukan logout. Silakan coba lagi.",
+          icon: "error",
+        });
+      }
     }
   };
 
@@ -79,6 +98,20 @@ const NavbarComponent = () => {
             <i className="bx bxs-cart-add text-xl"></i>
             {totalItems > 0 ? `(${totalItems})` : ""}
           </Link>
+
+          {/* Profile Button */}
+          {isLoggedIn && (
+            <Link
+              to="/profile"
+            className={`${
+              isDarkMode
+                ? "text-[#f0f0f0] bg-[#303030]"
+                : "text-[#353535] bg-[#f0f0f0]"
+            } flex items-center justify-center cursor-pointer py-2 px-3 hover:text-white hover:bg-[#28a154] rounded-sm text-center`}
+          >
+              <i className="bx bx-user text-xl"></i>
+            </Link>
+          )}
 
           {/* Hamburger Menu */}
           <button
@@ -150,6 +183,66 @@ const NavbarComponent = () => {
               </Link>
             </li>
 
+            <li>
+              <Link
+                to="/my-order"
+                className={`${
+                  isDarkMode
+                    ? "text-[#f0f0f0] bg-[#140c00]"
+                    : "text-[#353535] bg-white"
+                } block py-2 px-3 hover:text-white hover:bg-[#28a154] rounded-sm`}
+                aria-current="page"
+              >
+                Pesanan Saya
+              </Link>
+            </li>
+
+            <li>
+              <Link
+                to="/cart"
+                className={`${
+                  isDarkMode
+                    ? "text-[#f0f0f0] bg-[#303030]"
+                    : "text-[#353535] bg-[#f0f0f0]"
+                } hidden cursor-pointer md:block py-2 px-3 hover:text-white w-full md:w-auto hover:bg-[#28a154] rounded-sm text-center`}
+              >
+                <i className="bx bxs-cart-add"></i>
+                {totalItems > 0 ? `(${totalItems})` : ""}
+              </Link>
+            </li>
+            
+            {isLoggedIn && (
+              <li>
+                <Link
+                  to="/profile"
+                className={`${
+                  isDarkMode
+                    ? "text-[#f0f0f0] bg-[#303030]"
+                    : "text-[#353535] bg-[#f0f0f0]"
+                } hidden cursor-pointer md:block py-2 px-3 hover:text-white w-full md:w-auto hover:bg-[#28a154] rounded-sm text-center`}
+              >
+                <i className="bx bx-user"></i>
+              </Link>
+            </li>
+            )}
+
+            <li>
+              <button
+                onClick={() => setIsDarkMode(!isDarkMode)}
+                className={`${
+                  isDarkMode
+                    ? "text-[#f0f0f0] bg-[#303030]"
+                    : "text-[#353535] bg-[#f0f0f0]"
+                } cursor-pointer block py-2 px-3 text-center hover:text-white w-full md:w-auto hover:bg-[#28a154] rounded-sm`}
+              >
+                {isDarkMode ? (
+                  <i className="bx bxs-sun"></i>
+                ) : (
+                  <i className="bx bxs-moon"></i>
+                )}
+              </button>
+            </li>
+
             <li className="w-full md:w-auto">
               {isLoggedIn ? (
                 <button
@@ -176,35 +269,6 @@ const NavbarComponent = () => {
                   </button>
                 </Link>
               )}
-            </li>
-            <li>
-              <button
-                onClick={() => setIsDarkMode(!isDarkMode)}
-                className={`${
-                  isDarkMode
-                    ? "text-[#f0f0f0] bg-[#303030]"
-                    : "text-[#353535] bg-[#f0f0f0]"
-                } cursor-pointer block py-2 px-3 text-center hover:text-white w-full md:w-auto hover:bg-[#28a154] rounded-sm`}
-              >
-                {isDarkMode ? (
-                  <i className="bx bxs-sun"></i>
-                ) : (
-                  <i className="bx bxs-moon"></i>
-                )}
-              </button>
-            </li>
-            <li>
-              <Link
-                to="/cart"
-                className={`${
-                  isDarkMode
-                    ? "text-[#f0f0f0] bg-[#303030]"
-                    : "text-[#353535] bg-[#f0f0f0]"
-                } hidden cursor-pointer md:block py-2 px-3 hover:text-white w-full md:w-auto hover:bg-[#28a154] rounded-sm text-center`}
-              >
-                <i className="bx bxs-cart-add"></i>
-                {totalItems > 0 ? `(${totalItems})` : ""}
-              </Link>
             </li>
           </ul>
         </div>

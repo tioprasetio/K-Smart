@@ -12,6 +12,8 @@ import { ProductProvider } from "./context/ProductContext";
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import AuthPage from "./pages/AuthPage";
+import ProfilePage from "./pages/ProfilePage";
+import MyOrderPage from "./pages/MyOrderPage";
 // import AllProducts from "./pages/AllProducts";
 
 declare global {
@@ -57,6 +59,10 @@ function App() {
           <Route path="/cart" element={<CartPage />} />
 
           <Route path="/checkout" element={<CheckoutPage />} />
+
+          <Route path="/profile" element={<ProfilePage />} />
+
+          <Route path="/my-order" element={<MyOrderPage />} />
 
           {/* Dynamic Route */}
           <Route path="/product/:productSlug" element={<ProductDetailPage />} />

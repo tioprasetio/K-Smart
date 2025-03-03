@@ -10,16 +10,26 @@ const AuthForm = () => {
   const { isDarkMode } = useDarkMode();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState(""); // State untuk nama
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [name, setName] = useState("");
+  const [alamat, setAlamat] = useState("");
+  const [no_hp, setNoHp] = useState("");
+  const [tanggal_lahir, setTanggalLahir] = useState("");
+  const [jenis_kelamin, setJenisKelamin] = useState("");
   const [error, setError] = useState("");
-  const [isRegistering, setIsRegistering] = useState(false); // State untuk mode registrasi
+  const [isRegistering, setIsRegistering] = useState(false);
   const navigate = useNavigate();
-  const { setUserEmail } = useCart(); // Ambil setUserEmail dari context
+  const { setUserEmail } = useCart();
 
   // 🔥 Fungsi untuk menyimpan user ke Firestore jika belum ada
   const saveUserToFirestore = async (user: {
     uid: string;
     email: string | null;
+    name: string;
+    alamat: string;
+    no_hp: string;
+    tanggal_lahir: string;
+    jenis_kelamin: string;
   }) => {
     try {
       const userRef = doc(db, "users", user.uid); // Dokumen berdasarkan UID
@@ -31,6 +41,10 @@ const AuthForm = () => {
           name: name || "User", // Gunakan nama dari input atau default "User"
           email: user.email,
           BV: 0, // BV default 0
+          alamat: user.alamat,
+          no_hp: user.no_hp,
+          tanggal_lahir: user.tanggal_lahir,
+          jenis_kelamin: user.jenis_kelamin,
         });
       }
     } catch (error) {
@@ -59,12 +73,29 @@ const AuthForm = () => {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const { user } = await registerUser(email, password); // Destructure user dari AuthResponse
 
+    if (!/^\d+$/.test(no_hp)) {
+      setError("Nomor HP harus berisi angka saja.");
+      return;
+    }
+
+    // Validasi password dan confirm password
+    if (password !== confirmPassword) {
+      setError("Password dan Confirm Password harus sama.");
+      return; // Hentikan proses registrasi jika tidak sama
+    }
+
+    try {
+      const { user } = await registerUser(email, password);
       if (user && user.email) {
-        // Pastikan user dan user.email ada
-        await saveUserToFirestore(user); // Simpan ke Firestore
+        await saveUserToFirestore({
+          ...user,
+          name,
+          alamat,
+          no_hp,
+          tanggal_lahir,
+          jenis_kelamin,
+        });
 
         // Simpan ke localStorage & pindah ke halaman utama
         localStorage.setItem("user", JSON.stringify(user));
@@ -83,18 +114,80 @@ const AuthForm = () => {
       className="space-y-4"
     >
       {isRegistering && (
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Nama"
-          required
-          className={`w-full p-2 border rounded ${
-            isDarkMode
-              ? "bg-[#252525] text-[#f0f0f0]"
-              : "bg-white text-[#353535]"
-          }`}
-        />
+        <>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Nama"
+            required
+            className={`w-full p-2 border rounded ${
+              isDarkMode
+                ? "bg-[#252525] text-[#f0f0f0]"
+                : "bg-white text-[#353535]"
+            }`}
+          />
+          <textarea
+            value={alamat}
+            onChange={(e) => setAlamat(e.target.value)}
+            placeholder="Alamat"
+            required
+            className={`w-full p-2 border rounded ${
+              isDarkMode
+                ? "bg-[#252525] text-[#f0f0f0]"
+                : "bg-white text-[#353535]"
+            }`}
+          />
+          <input
+            type="tel"
+            value={no_hp}
+            onChange={(e) => setNoHp(e.target.value)}
+            placeholder="Nomor HP"
+            required
+            className={`w-full p-2 border rounded ${
+              isDarkMode
+                ? "bg-[#252525] text-[#f0f0f0]"
+                : "bg-white text-[#353535]"
+            }`}
+          />
+
+          <div>
+            <label
+              htmlFor="tanggal_lahir"
+              className={`text-sm ${
+                isDarkMode ? "text-[#f0f0f0]" : "text-[#353535]"
+              }`}
+            >
+              Tanggal Lahir
+            </label>
+            <input
+              type="date"
+              id="tanggal_lahir"
+              value={tanggal_lahir}
+              onChange={(e) => setTanggalLahir(e.target.value)}
+              required
+              className={`w-full p-2 border rounded ${
+                isDarkMode
+                  ? "bg-[#252525] text-[#f0f0f0]"
+                  : "bg-white text-[#353535]"
+              }`}
+            />
+          </div>
+          <select
+            value={jenis_kelamin}
+            onChange={(e) => setJenisKelamin(e.target.value)}
+            required
+            className={`w-full p-2 border rounded ${
+              isDarkMode
+                ? "bg-[#252525] text-[#f0f0f0]"
+                : "bg-white text-[#353535]"
+            }`}
+          >
+            <option value="">Pilih Jenis Kelamin</option>
+            <option value="L">Laki-laki</option>
+            <option value="P">Perempuan</option>
+          </select>
+        </>
       )}
 
       <input
@@ -118,6 +211,21 @@ const AuthForm = () => {
           isDarkMode ? "bg-[#252525] text-[#f0f0f0]" : "bg-white text-[#353535]"
         }`}
       />
+
+      {isRegistering && (
+        <input
+          type="password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          placeholder="Confirm Password"
+          required
+          className={`w-full p-2 border rounded ${
+            isDarkMode
+              ? "bg-[#252525] text-[#f0f0f0]"
+              : "bg-white text-[#353535]"
+          }`}
+        />
+      )}
 
       <button
         type="submit"
