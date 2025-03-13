@@ -263,7 +263,7 @@ const AuthForm = () => {
           type="text"
           value={referral_code}
           onChange={(e) => setReferralCode(e.target.value)}
-          placeholder="Referral Code"
+          placeholder="Code Referral"
           required
           className={`w-full p-2 border rounded ${
             isDarkMode
