@@ -13,6 +13,10 @@ import SkeletonCardProduct from "../components/SkeletonCardProduct";
 import { getBestSellers, getProduct } from "../api/product/getProduct";
 import { useDarkMode } from "../context/DarkMode";
 import { Product } from "../data/products";
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { db } from "../config/Firebase";
+import Swal from "sweetalert2";
+import PopupVoucher from "../components/PopupVoucher";
 
 const HomePage = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -40,6 +44,52 @@ const HomePage = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const checkTransactionStatus = async () => {
+      const pendingTransaction = localStorage.getItem("pendingTransaction");
+
+      if (pendingTransaction) {
+        const transaction = JSON.parse(pendingTransaction);
+
+        try {
+          const response = await fetch(
+            `http://localhost:5000/api/payment/status/${transaction.order_id}`
+          );
+          const data = await response.json();
+
+          if (data.success && data.status === "berhasil") {
+            // Simpan transaksi ke Firestore
+            await setDoc(doc(db, "transactions", transaction.order_id), {
+              userId: transaction.userId,
+              items: transaction.items,
+              totalHarga: transaction.totalHarga,
+              totalBV: transaction.totalBV,
+              shippingMethod: transaction.shippingMethod,
+              shippingPrice: transaction.shippingPrice,
+              status: "berhasil", // Status berhasil
+              createdAt: serverTimestamp(),
+            });
+
+            // Hapus transaksi dari localStorage
+            localStorage.removeItem("pendingTransaction");
+
+            // Tampilkan alert sukses
+            Swal.fire({
+              title: "Pembayaran Berhasil!",
+              text: `Anda mendapatkan ${transaction.totalBV} BV.`,
+              icon: "success",
+              confirmButtonText: "OK",
+            });
+          }
+        } catch (error) {
+          console.error("Error checking transaction status:", error);
+        }
+      }
+    };
+
+    checkTransactionStatus();
+  }, []);
+
   // Gunakan useMemo untuk menghindari re-renders yang tidak perlu
   const displayedBestSellers = useMemo(
     () => bestSellers.slice(0, 4),
@@ -53,6 +103,7 @@ const HomePage = () => {
         isDarkMode ? "bg-[#140c00]" : "bg-[#f4f6f9]"
       } pt-16 sm:pt-24 overflow-x-hidden w-full min-h-screen`}
     >
+      <PopupVoucher />
       <NavbarComponent />
       <div className="p-6">
         <Banner />

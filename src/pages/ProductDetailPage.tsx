@@ -8,6 +8,7 @@ import Btn from "../components/Btn";
 import { formatRupiah } from "../utils/formatCurrency";
 import { useCart } from "../context/CartContext";
 import Swal from "sweetalert2";
+import { useCheckout } from "../context/CheckoutContext";
 
 const ProductDetailPage = () => {
   // const params = useParams<{ productSlug: string }>();
@@ -16,6 +17,7 @@ const ProductDetailPage = () => {
   const location = useLocation();
   const { addToCart } = useCart();
   const navigate = useNavigate();
+  const { setSelectedProducts } = useCheckout();
 
   const product = location.state;
 
@@ -65,6 +67,31 @@ const ProductDetailPage = () => {
       });
     }
   };
+
+  const handleBuyNow = () => {
+    if (!isLoggedIn) {
+      Swal.fire({
+        title: "Oops...",
+        text: "Anda harus login terlebih dahulu!",
+        icon: "error",
+      });
+      navigate("/login");
+    } else {
+      const productToCheckout = {
+        id: product.id,
+        name: product.name,
+        picture: product.picture,
+        harga: product.harga,
+        quantity: quantity,
+        bv: product.bv,
+      };
+
+      // Tambahkan produk ke selectedProducts di konteks checkout
+      setSelectedProducts([productToCheckout]);
+      navigate("/checkout");
+    }
+  };
+
   return (
     <>
       <NavbarComponent />
@@ -162,8 +189,8 @@ const ProductDetailPage = () => {
                       >
                         <i className="bx bx-cart-add text-lg"></i> Keranjang
                       </Btn>
-                      <Btn className="flex-1">
-                        Beli Sekarang{" "}
+                      <Btn className="flex-1" onClick={handleBuyNow}>
+                        Beli Sekarang
                         <i className="bx bx-right-arrow-alt text-lg"></i>
                       </Btn>
                     </div>
@@ -404,8 +431,8 @@ const ProductDetailPage = () => {
                         >
                           <i className="bx bx-cart-add text-lg"></i> Keranjang
                         </Btn>
-                        <Btn className="flex-1">
-                          Beli Sekarang{" "}
+                        <Btn className="flex-1" onClick={handleBuyNow}>
+                          Beli Sekarang
                           <i className="bx bx-right-arrow-alt text-lg"></i>
                         </Btn>
                       </div>

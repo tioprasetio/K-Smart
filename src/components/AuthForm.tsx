@@ -1,14 +1,23 @@
 import { useState } from "react";
-import { useCart } from "../context/CartContext"; // Import useCart
 import { useNavigate } from "react-router-dom";
 import { loginUser, registerUser } from "../api/auth/authService"; // Import registerUser
 import { useDarkMode } from "../context/DarkMode";
 import { db } from "../config/Firebase"; // Import Firestore
-import { doc, getDoc, setDoc } from "firebase/firestore"; // Import Firestore functions
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore"; // Import Firestore functions
+import { useUser } from "../context/UserContext";
 
 const AuthForm = () => {
   const { isDarkMode } = useDarkMode();
   const [email, setEmail] = useState("");
+  const [referral_code, setReferralCode] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [name, setName] = useState("");
@@ -19,7 +28,42 @@ const AuthForm = () => {
   const [error, setError] = useState("");
   const [isRegistering, setIsRegistering] = useState(false);
   const navigate = useNavigate();
-  const { setUserEmail } = useCart();
+  // const { setUserEmail } = useCart();
+  const { setUser } = useUser();
+
+  // 🔥 Fungsi untuk memvalidasi referral code (UID leader)
+  const validateReferralCode = async (referralCode: string) => {
+    try {
+      const leaderRef = doc(db, "users", referralCode); // Cari user dengan UID
+      const leaderSnap = await getDoc(leaderRef);
+
+      if (!leaderSnap.exists()) {
+        throw new Error(
+          "Referral code tidak valid. Pastikan referral code benar."
+        );
+      }
+      return referralCode; // Kembalikan UID leader
+    } catch (error) {
+      console.error("Error validasi referral code:", error);
+      throw error;
+    }
+  };
+
+  // 🔥 Fungsi untuk memeriksa apakah email sudah digunakan
+  const checkEmailExists = async (email: string) => {
+    try {
+      const usersRef = collection(db, "users");
+      const q = query(usersRef, where("email", "==", email));
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        throw new Error("Email sudah digunakan.");
+      }
+    } catch (error) {
+      console.error("Error memeriksa email:", error);
+      throw error;
+    }
+  };
 
   // 🔥 Fungsi untuk menyimpan user ke Firestore jika belum ada
   const saveUserToFirestore = async (user: {
@@ -30,6 +74,7 @@ const AuthForm = () => {
     no_hp: string;
     tanggal_lahir: string;
     jenis_kelamin: string;
+    referral_code: string;
   }) => {
     try {
       const userRef = doc(db, "users", user.uid); // Dokumen berdasarkan UID
@@ -37,7 +82,7 @@ const AuthForm = () => {
 
       if (!userSnap.exists()) {
         // Jika user belum ada, tambahkan ke Firestore
-        await setDoc(userRef, {
+        const userData = {
           name: name || "User", // Gunakan nama dari input atau default "User"
           email: user.email,
           BV: 0, // BV default 0
@@ -45,7 +90,16 @@ const AuthForm = () => {
           no_hp: user.no_hp,
           tanggal_lahir: user.tanggal_lahir,
           jenis_kelamin: user.jenis_kelamin,
-        });
+          leader_id: null as string | null, // Default null, akan diupdate jika referral code valid
+        };
+
+        // Jika referral code (UID leader) valid, simpan leader_id
+        if (user.referral_code) {
+          const leaderId = await validateReferralCode(user.referral_code);
+          userData.leader_id = leaderId; // Update leader_id jika referral code valid
+        }
+
+        await setDoc(userRef, userData); // Simpan data user ke Firestore
       }
     } catch (error) {
       console.error("Error menyimpan user ke Firestore:", error);
@@ -58,11 +112,15 @@ const AuthForm = () => {
       const user = await loginUser(email, password); // Langsung dapatkan user
 
       if (user && user.email) {
+        const userData = {
+          ...user,
+          role: "user", // Pastikan ada role, default ke "user"
+        };
         // Pastikan user dan user.email ada
 
         // Simpan ke localStorage & pindah ke halaman utama
         localStorage.setItem("user", JSON.stringify(user));
-        setUserEmail(user.email); // Set email ke context
+        setUser(userData); // Set email ke context
         navigate("/");
       }
     } catch (err) {
@@ -86,6 +144,14 @@ const AuthForm = () => {
     }
 
     try {
+      // Validasi email sebelum melanjutkan registrasi
+      await checkEmailExists(email);
+
+      // Validasi referral code sebelum melanjutkan registrasi
+      if (referral_code) {
+        await validateReferralCode(referral_code); // Jika referral code tidak valid, ini akan melempar error
+      }
+
       const { user } = await registerUser(email, password);
       if (user && user.email) {
         await saveUserToFirestore({
@@ -95,16 +161,18 @@ const AuthForm = () => {
           no_hp,
           tanggal_lahir,
           jenis_kelamin,
+          referral_code,
         });
 
         // Simpan ke localStorage & pindah ke halaman utama
         localStorage.setItem("user", JSON.stringify(user));
-        setUserEmail(user.email); // Set email ke context
+        setUser(user); // Set email ke context
         navigate("/");
       }
-    } catch (err) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
       console.error("Register error:", err);
-      setError("Registrasi gagal. Coba lagi.");
+      setError(err.message || "Registrasi gagal. Coba lagi."); // Tampilkan pesan error yang spesifik
     }
   };
 
@@ -188,6 +256,21 @@ const AuthForm = () => {
             <option value="P">Perempuan</option>
           </select>
         </>
+      )}
+
+      {isRegistering && (
+        <input
+          type="text"
+          value={referral_code}
+          onChange={(e) => setReferralCode(e.target.value)}
+          placeholder="Referral Code"
+          required
+          className={`w-full p-2 border rounded ${
+            isDarkMode
+              ? "bg-[#252525] text-[#f0f0f0]"
+              : "bg-white text-[#353535]"
+          }`}
+        />
       )}
 
       <input

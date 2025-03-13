@@ -1,37 +1,25 @@
 import Swal from "sweetalert2";
 import { useCheckout } from "../context/CheckoutContext";
-import NavbarComponent from "../components/Navbar";
 import { formatRupiah } from "../utils/formatCurrency";
 import Btn from "../components/Btn";
 import { useNavigate } from "react-router";
 import { useDarkMode } from "../context/DarkMode";
 import { auth, db } from "../config/Firebase";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { useCart } from "../context/CartContext";
+import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
-import {
-  collection,
-  getDocs,
-  addDoc,
-  serverTimestamp,
-} from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
+import axios from "axios";
 
 interface ShippingMethod {
   name: string;
   price: number;
 }
 
-interface PaymentMethod {
-  name: string;
-  rekening: number;
-}
-
 const CheckoutPage = () => {
   const { selectedProducts, setSelectedProducts } = useCheckout();
   const navigate = useNavigate();
   const { isDarkMode } = useDarkMode();
-  const { clearCheckedOutItems } = useCart();
   const [name, setName] = useState("");
   const [alamat, setAlamat] = useState("");
   const [no_hp, setNoHp] = useState("");
@@ -41,12 +29,13 @@ const CheckoutPage = () => {
   const [discount, setDiscount] = useState(0);
 
   const [methods, setMethods] = useState<ShippingMethod[]>([]);
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [selectedMethod, setSelectedMethod] = useState<ShippingMethod | null>(
     null
   );
-  const [selectedPaymentMethod, setSelectedPaymentMethod] =
-    useState<PaymentMethod | null>(null);
+
+  if (selectedProducts.length === 0) {
+    navigate("/cart");
+  }
 
   // Untuk voucher
   const handleApplyVoucher = async () => {
@@ -97,25 +86,6 @@ const CheckoutPage = () => {
     fetchShippingMethods();
   }, []);
 
-  // Untuk metode pembayaran
-  useEffect(() => {
-    const fetchPaymentMethods = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, "payment_method"));
-        const paymentData: PaymentMethod[] = querySnapshot.docs.map((doc) => ({
-          name: doc.data().name as string,
-          rekening: doc.data().rekening as number,
-        }));
-
-        setPaymentMethods(paymentData);
-      } catch (error) {
-        console.error("Error fetching payment methods:", error);
-      }
-    };
-
-    fetchPaymentMethods();
-  }, []);
-
   // Untuk ambil data user dari localStorage
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -161,11 +131,6 @@ const CheckoutPage = () => {
     setSelectedMethod(method);
   };
 
-  // Untuk pilih metode pembayaran
-  const handleSelectPaymentMethod = (method: PaymentMethod) => {
-    setSelectedPaymentMethod(method);
-  };
-
   const totalBV = selectedProducts.reduce(
     (total, item) => total + item.bv * item.quantity,
     0
@@ -187,57 +152,37 @@ const CheckoutPage = () => {
       return;
     }
 
-    if (!selectedPaymentMethod) {
-      Swal.fire("Error", "Pilih metode pembayaran!", "error");
-      return;
-    }
-
     try {
-      // Simpan transaksi ke Firestore
-      await addDoc(collection(db, "transactions"), {
-        userId,
-        items: selectedProducts,
-        totalHarga,
-        totalBV,
-        shippingMethod: selectedMethod.name,
-        shippingPrice: selectedMethod.price,
-        status: "pending", // Status awal
-        paymentMethod: selectedPaymentMethod.name,
-        paymentRekening: selectedPaymentMethod.rekening,
-        createdAt: serverTimestamp(), // Timestamp dari Firestore
-      });
+      const orderId = `ORDER-${Date.now()}`;
 
-      const userRef = doc(db, "users", userId);
-      const userSnap = await getDoc(userRef);
+      localStorage.setItem("order_id", orderId);
 
-      if (userSnap.exists()) {
-        const userData = userSnap.data();
-        const newBV = (userData.BV || 0) + totalBV;
+      // Hitung total BV dengan lebih aman
+      const totalBV = selectedProducts.reduce((sum, product) => {
+        return sum + (product.bv || 0) * (product.quantity || 1);
+      }, 0);
 
-        // Update BV di Firestore
-        await updateDoc(userRef, { BV: newBV });
+      // Kirim data ke backend untuk membuat transaksi Midtrans
+      const response = await axios.post(
+        "https://4577-202-57-1-106.ngrok-free.app/api/payment/create-transaction",
+        {
+          order_id: orderId,
+          gross_amount: totalHarga,
+          uid: userId,
+          products: selectedProducts,
+          totalBV, // Tambahkan total BV ke payload
+          customer_details: {
+            first_name: name,
+            email: userData.email,
+            phone: userData.phone || "",
+          },
+        }
+      );
 
-        // Hapus produk yang sudah dibayar dari cart di state dan localStorage
-        clearCheckedOutItems(selectedProducts);
-
-        // Hapus checkout dari local storage dan state
-        localStorage.removeItem("selectedProducts");
-        setSelectedProducts([]);
-
-        // Tampilkan alert sukses
-        Swal.fire({
-          title: "Pembayaran Berhasil!",
-          text: `Anda mendapatkan ${totalBV} BV.`,
-          icon: "success",
-          confirmButtonText: "OK",
-        });
-
-        navigate("/"); // Redirect setelah pembayaran
-      } else {
-        Swal.fire("Error", "User tidak ditemukan!", "error");
-      }
+      // Redirect ke halaman pembayaran Midtrans
+      window.location.href = response.data.redirect_url;
     } catch (error) {
-      console.error("Error updating BV:", error);
+      console.error("Error saat memproses pembayaran:", error);
       Swal.fire(
         "Error",
         "Terjadi kesalahan saat memproses pembayaran!",
@@ -267,6 +212,38 @@ const CheckoutPage = () => {
     });
   };
 
+  // Agar user tidak bisa klik back di halaman checkout
+  useEffect(() => {
+    const handlePopState = () => {
+      Swal.fire({
+        title: "Batalkan Checkout?",
+        text: "Apakah Anda yakin ingin membatalkan checkout?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Ya, Batalkan",
+        cancelButtonText: "Tidak",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          localStorage.removeItem("selectedProducts");
+          setSelectedProducts([]);
+          Swal.fire("Dibatalkan!", "Checkout telah dibatalkan.", "success");
+          navigate("/cart");
+        } else {
+          window.history.pushState(null, "", window.location.href);
+        }
+      });
+    };
+
+    window.history.pushState(null, "", window.location.href);
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [navigate, setSelectedProducts]);
+
   if (loading) {
     return (
       <div
@@ -284,13 +261,12 @@ const CheckoutPage = () => {
 
   return (
     <>
-      <NavbarComponent />
       <div
         className={`${
           isDarkMode
             ? "bg-[#140C00] text-[#FFFFFF]"
             : "bg-[#f4f6f9] text-[#353535]"
-        } p-6 pt-24 mb-24 sm:pt-28 w-full min-h-screen pb-20`}
+        } p-6 mb-16 w-full min-h-screen pb-20`}
       >
         <h1 className="text-2xl font-bold mb-4">Checkout</h1>
 
@@ -414,55 +390,6 @@ const CheckoutPage = () => {
                 <p className="font-medium">
                   {formatRupiah(selectedMethod?.price || 0)}
                 </p>
-                <i className="bx bx-checkbox-checked text-2xl"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div
-          className={`${
-            isDarkMode
-              ? "bg-[#404040] text-[#FFFFFF]"
-              : "bg-[#FFFFFF] text-[#353535]"
-          } p-4 rounded-lg flex mt-4 flex-col gap-2`}
-        >
-          <div className="flex justify-between items-center mb-2">
-            <label className="font-medium">Metode Pembayaran</label>
-            <select
-              className={`${
-                isDarkMode
-                  ? "bg-[#404040] text-[#FFFFFF]"
-                  : "bg-[#FFFFFF] text-[#353535]"
-              } p-2 border rounded-lg w-full`}
-              onChange={(e) => {
-                const method = paymentMethods.find(
-                  (m) => m.name === e.target.value
-                );
-                if (method) handleSelectPaymentMethod(method);
-              }}
-            >
-              <option value="">Pilih Metode Pembayaran</option>
-              {paymentMethods.map((method, index) => (
-                <option key={index} value={method.name}>
-                  {method.name} - {formatRupiah(method.rekening)}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div
-            className={`${
-              isDarkMode
-                ? "bg-[#e1ffec] text-[#353535] border-1 border-[#28a154]"
-                : "bg-[#e1ffec] text-[#353535] border-1 border-[#28a154]"
-            } p-4 rounded-lg flex flex-col gap-2`}
-          >
-            {/* Bagian atas: Judul dan Harga */}
-            <div className="flex justify-between items-center text-sm">
-              <p className="font-bold">{selectedPaymentMethod?.name}</p>
-              <div className="flex items-center gap-2">
-                <p className="font-medium">{selectedPaymentMethod?.rekening}</p>
                 <i className="bx bx-checkbox-checked text-2xl"></i>
               </div>
             </div>

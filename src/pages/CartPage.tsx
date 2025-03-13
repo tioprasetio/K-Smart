@@ -108,17 +108,42 @@ const CartPage = () => {
         className={`${
           isDarkMode
             ? "bg-[#140c00] text-[#f0f0f0]"
-            : "bg-[#f0f0f0] text-[#353535]"
-        } p-6 pt-24 sm:pt-28 w-full min-h-screen`}
+            : "bg-[#f4f6f9] text-[#353535]"
+        } p-6 pt-24 pb-48 w-full h-full`}
       >
-        <h1 className="text-2xl font-bold mb-4">
-          Keranjang Saya {totalItems > 0 ? `(${totalItems})` : ""}
-        </h1>
+        <div className="flex items-center gap-2 mb-4">
+          <i
+            className="bx bx-arrow-back text-xl md:text-2xl cursor-pointer"
+            onClick={() => navigate(-1)} // Tambahkan fungsi kembali
+          ></i>
+          <h1 className="text-2xl font-bold">
+            Keranjang Saya {totalItems > 0 ? `(${totalItems})` : ""}
+          </h1>
+        </div>
 
         {loading && <div>Loading...</div>}
 
         {cart.length === 0 ? (
-          <p>Keranjang masih kosong.</p>
+          <div className="flex flex-col items-center justify-center mt-32 gap-2">
+            <img
+              src="https://cdn-icons-png.flaticon.com/128/428/428173.png"
+              alt=""
+            />
+            <p
+              className={`${
+                isDarkMode ? "text-[#f0f0f0]" : "text-[#959595]"
+              } text-center text-lg font-semibold`}
+            >
+              Keranjang masih kosong
+            </p>
+            <p
+              className={`${
+                isDarkMode ? "text-[#f0f0f0]" : "text-[#959595]"
+              } text-center text-base font-normal`}
+            >
+              Simpan barang yang kamu ingin beli disini
+            </p>
+          </div>
         ) : (
           cart.map((item) => (
             <div
@@ -211,14 +236,14 @@ const CartPage = () => {
               <h2
                 className={`${
                   isDarkMode ? "text-[#f0f0f0]" : "text-[#353535]"
-                } text-lg font-semibold`}
+                } text-base font-semibold`}
               >
                 Total: {formatRupiah(totalHarga)}
               </h2>
               <h2
                 className={`${
                   isDarkMode ? "text-[#f0f0f0]" : "text-[#353535]"
-                } text-lg font-semibold`}
+                } text-base font-semibold`}
               >
                 BV Didapat: {totalBV}
               </h2>

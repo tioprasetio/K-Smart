@@ -5,26 +5,30 @@ import { auth, db } from "../config/Firebase";
 import { useDarkMode } from "../context/DarkMode";
 import NavbarComponent from "../components/Navbar";
 import { formatRupiah } from "../utils/formatCurrency";
+import { useNavigate } from "react-router";
 
+// isi detail product
 interface OrderItem {
   picture: string;
   name: string;
   quantity: number;
   harga: number;
+  bv: number;
 }
 
+// isi detail order
 interface Order {
   id: string;
   status: string;
-  totalHarga: number;
-  shippingMethod: string;
-  items: OrderItem[];
+  gross_amount: number;
+  products: OrderItem[];
 }
 
 const MyOrderPage = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const { isDarkMode } = useDarkMode();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -39,12 +43,9 @@ const MyOrderPage = () => {
     return () => unsubscribe();
   }, []);
 
-  const fetchOrders = async (userId: string) => {
+  const fetchOrders = async (uid: string) => {
     try {
-      const q = query(
-        collection(db, "transactions"),
-        where("userId", "==", userId)
-      );
+      const q = query(collection(db, "transactions"), where("uid", "==", uid));
       const querySnapshot = await getDocs(q);
 
       if (querySnapshot.empty) {
@@ -87,9 +88,17 @@ const MyOrderPage = () => {
           isDarkMode
             ? "bg-[#140C00] text-[#FFFFFF]"
             : "bg-[#f4f6f9] text-[#353535]"
-        } p-6 pt-24 mb-24 sm:pt-28 w-full min-h-screen pb-20`}
+        } p-6 pt-24 sm:pt-28 w-full min-h-screen pb-20`}
       >
-        <h2 className="text-xl font-semibold mb-4">Pesanan Saya</h2>
+        <div className="flex items-center gap-2 mb-4">
+          <i
+            className="bx bx-arrow-back text-xl md:text-2xl cursor-pointer"
+            onClick={() => navigate(-1)} // Tambahkan fungsi kembali
+          ></i>
+          <h1 className="text-2xl font-bold">
+            Pesanan Saya
+          </h1>
+        </div>
         {orders.length === 0 ? (
           <p>Tidak ada pesanan.</p>
         ) : (
@@ -109,7 +118,7 @@ const MyOrderPage = () => {
                 </div>
 
                 <ul className="mt-2 space-y-2">
-                  {order.items.map((item, index) => (
+                  {order.products.map((item, index) => (
                     <li key={index} className="p-3 rounded-lg flex">
                       <img
                         src={item.picture}
@@ -121,7 +130,7 @@ const MyOrderPage = () => {
                           <div className="flex flex-col gap-1">
                             <p className="font-semibold">{item.name}</p>
                             <p className="font-semibold">
-                              {formatRupiah(item.harga)}
+                              {formatRupiah(order.gross_amount)}
                             </p>
                           </div>
                           <div className="text-xs pl-2">x{item.quantity}</div>

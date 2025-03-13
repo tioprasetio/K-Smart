@@ -1,46 +1,53 @@
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router";
-import { Product } from "../data/products";
-import { getProduct } from "../api/product/getProduct";
+import { Voucher } from "../data/vouchers";
+import { getVoucher } from "../api/voucher/getVoucher";
 import { useDarkMode } from "../context/DarkMode";
 
-const SearchBar = () => {
+const SearchVoucher = () => {
   const [query, setQuery] = useState("");
-  const [suggestions, setSuggestions] = useState<Product[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
+  const [suggestions, setSuggestions] = useState<Voucher[]>([]);
+  const [vouchers, setVouchers] = useState<Voucher[]>([]);
   const navigate = useNavigate();
   const { isDarkMode } = useDarkMode();
 
   //Fetch products sekali saja jika belum ada data
   useEffect(() => {
-    if (products.length === 0) {
+    if (vouchers.length === 0) {
+      let isMounted = true;
       const fetchData = async () => {
         try {
-          const allProducts = await getProduct();
-          setProducts(allProducts);
+          const allVouchers = await getVoucher();
+          if (isMounted) {
+            setVouchers(allVouchers);
+          }
         } catch (error) {
           console.error("Error fetching data:", error);
         }
       };
+
       fetchData();
+      return () => {
+        isMounted = false; // Mencegah update state setelah unmount
+      };
     }
-  }, [products.length]);
+  }, [vouchers.length]);
 
   //Debounce pencarian (delay 300ms)
   useEffect(() => {
     const timer = setTimeout(() => {
       if (query.length > 0) {
-        const filteredProducts = products.filter((product) =>
-          product.name?.toLowerCase().includes(query.toLowerCase())
+        const filteredVouchers = vouchers.filter((voucher) =>
+          voucher.code?.toLowerCase().includes(query.toLowerCase())
         );
-        setSuggestions(filteredProducts);
+        setSuggestions(filteredVouchers);
       } else {
         setSuggestions([]);
       }
     }, 300); // Delay 300ms
 
     return () => clearTimeout(timer); // Cleanup timer agar tidak ada delay tumpang tindih
-  }, [query, products]);
+  }, [query, vouchers]);
 
   //Membuat slug dari nama produk
   const generateSlug = (name: string) =>
@@ -55,14 +62,14 @@ const SearchBar = () => {
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (query.trim().length > 0) {
-      navigate(`/all-product?keyword=${encodeURIComponent(query.trim())}`);
+      navigate(`/voucher?keyword=${encodeURIComponent(query.trim())}`);
     }
   };
 
   //Navigasi ke halaman produk dengan ID + Slug (agar tidak bentrok jika ada nama yang sama)
-  const handleSuggestionClick = (product: Product) => {
-      navigate(`/product/${product.id}-${generateSlug(product.name)}`, {
-        state: product,
+  const handleSuggestionClick = (voucher: Voucher) => {
+      navigate(`/voucher/${generateSlug(voucher.code)}`, {
+        state: voucher,
       });
     setQuery("");
     setSuggestions([]);
@@ -103,7 +110,7 @@ const SearchBar = () => {
                 ? "bg-[#303030] text-white border-gray-700"
                 : "bg-white text-[#353535] border-gray-300"
             } block w-full p-4 ps-10 text-sm border rounded-lg focus:ring-[#28a154] focus:border-[#28a154]`}
-            placeholder="Cari produk"
+            placeholder="Cari voucher"
             value={query}
             onChange={handleSearch}
             required
@@ -126,17 +133,17 @@ const SearchBar = () => {
               : "bg-white text-[#353535]"
           } absolute mt-1 w-full rounded-md shadow-lg`}
         >
-          {suggestions.map((product) => (
+          {suggestions.map((voucher) => (
             <li
-              key={product.id}
+              key={voucher.id}
               className={`${
                 isDarkMode
                   ? "hover:bg-[#252525] rounded-md"
                   : "hover:bg-gray-100 rounded-md"
               } p-2 cursor-pointer`}
-              onClick={() => handleSuggestionClick(product)}
+              onClick={() => handleSuggestionClick(voucher)}
             >
-              {product.name}
+              {voucher.code}
             </li>
           ))}
         </ul>
@@ -156,7 +163,7 @@ const SearchBar = () => {
               isDarkMode ? "hover:bg-[#252525]" : "hover:bg-gray-100"
             } p-2 cursor-pointer`}
           >
-            Produk tidak ditemukan.
+            Voucher tidak ditemukan.
           </p>
         </ul>
       )}
@@ -164,4 +171,4 @@ const SearchBar = () => {
   );
 };
 
-export default SearchBar;
+export default SearchVoucher;

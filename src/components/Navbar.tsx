@@ -63,7 +63,7 @@ const NavbarComponent = () => {
     <nav
       className={`${
         isDarkMode ? "bg-[#140c00]" : "bg-white"
-      } border-gray-200 fixed top-0 left-0 w-full z-999 shadow-md`}
+      } border-gray-200 fixed top-0 left-0 w-full z-40 shadow-md`}
     >
       <div className="w-full flex flex-wrap items-center justify-between mx-auto p-4">
         <Link
@@ -103,12 +103,12 @@ const NavbarComponent = () => {
           {isLoggedIn && (
             <Link
               to="/profile"
-            className={`${
-              isDarkMode
-                ? "text-[#f0f0f0] bg-[#303030]"
-                : "text-[#353535] bg-[#f0f0f0]"
-            } flex items-center justify-center cursor-pointer py-2 px-3 hover:text-white hover:bg-[#28a154] rounded-sm text-center`}
-          >
+              className={`${
+                isDarkMode
+                  ? "text-[#f0f0f0] bg-[#303030]"
+                  : "text-[#353535] bg-[#f0f0f0]"
+              } flex items-center justify-center cursor-pointer py-2 px-3 hover:text-white hover:bg-[#28a154] rounded-sm text-center`}
+            >
               <i className="bx bx-user text-xl"></i>
             </Link>
           )}
@@ -185,7 +185,7 @@ const NavbarComponent = () => {
 
             <li>
               <Link
-                to="/my-order"
+                to="/voucher"
                 className={`${
                   isDarkMode
                     ? "text-[#f0f0f0] bg-[#140c00]"
@@ -193,7 +193,7 @@ const NavbarComponent = () => {
                 } block py-2 px-3 hover:text-white hover:bg-[#28a154] rounded-sm`}
                 aria-current="page"
               >
-                Pesanan Saya
+                Voucher
               </Link>
             </li>
 
@@ -210,20 +210,20 @@ const NavbarComponent = () => {
                 {totalItems > 0 ? `(${totalItems})` : ""}
               </Link>
             </li>
-            
+
             {isLoggedIn && (
               <li>
                 <Link
                   to="/profile"
-                className={`${
-                  isDarkMode
-                    ? "text-[#f0f0f0] bg-[#303030]"
-                    : "text-[#353535] bg-[#f0f0f0]"
-                } hidden cursor-pointer md:block py-2 px-3 hover:text-white w-full md:w-auto hover:bg-[#28a154] rounded-sm text-center`}
-              >
-                <i className="bx bx-user"></i>
-              </Link>
-            </li>
+                  className={`${
+                    isDarkMode
+                      ? "text-[#f0f0f0] bg-[#303030]"
+                      : "text-[#353535] bg-[#f0f0f0]"
+                  } hidden cursor-pointer md:block py-2 px-3 hover:text-white w-full md:w-auto hover:bg-[#28a154] rounded-sm text-center`}
+                >
+                  <i className="bx bx-user"></i>
+                </Link>
+              </li>
             )}
 
             <li>

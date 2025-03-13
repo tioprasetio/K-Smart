@@ -1,5 +1,6 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
+import { Link } from "react-router";
 
 const Banner = () => {
   return (
@@ -18,17 +19,29 @@ const Banner = () => {
         >
           {/* Slide 1 */}
           <SwiperSlide>
-            <img
-              src="/assets/images/promo.png"
-              alt="Promo 1"
-              className="w-full h-auto rounded-lg"
-            />
+            <Link to="/voucher">
+              <img
+                src="/assets/images/promo-25.png"
+                alt="Promo 3"
+                className="w-full h-auto rounded-lg"
+              />
+            </Link>
           </SwiperSlide>
+
           {/* Slide 2 */}
           <SwiperSlide>
             <img
-              src="/assets/images/kirimBarang.png"
+              src="/assets/images/chatbot.png"
               alt="Promo 2"
+              className="w-full h-auto rounded-lg"
+            />
+          </SwiperSlide>
+
+          {/* Slide 3 */}
+          <SwiperSlide>
+            <img
+              src="/assets/images/katalog.png"
+              alt="Promo 1"
               className="w-full h-auto rounded-lg"
             />
           </SwiperSlide>

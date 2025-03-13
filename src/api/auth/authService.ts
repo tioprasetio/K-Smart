@@ -1,4 +1,5 @@
-import { auth } from "../../config/Firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { auth, db } from "../../config/Firebase";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -81,4 +82,20 @@ export const logoutUser = async (): Promise<void> => {
   sessionStorage.removeItem("accessToken");
 
   window.location.assign("/login");
+};
+
+// Fungsi untuk mendapatkan role user dari Firestore
+export const getUserRole = async (): Promise<string | null> => {
+  const user = auth.currentUser;
+
+  if (!user) return null; // Jika user belum login
+
+  const userRef = doc(db, "users", user.uid);
+  const userSnap = await getDoc(userRef);
+
+  if (userSnap.exists()) {
+    return userSnap.data().role || null;
+  } else {
+    return null;
+  }
 };

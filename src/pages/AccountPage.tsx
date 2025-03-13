@@ -1,18 +1,19 @@
-import React from "react";
-import AuthForm from "../components/AuthForm";
-import { Link } from "react-router";
-import { useDarkMode } from "../context/DarkMode";
+import { Link } from "react-router-dom";
 import NavbarComponent from "../components/Navbar";
+import ProfileForm from "../components/ProfileForm";
+import { useDarkMode } from "../context/DarkMode";
 
-const AuthPage: React.FC = () => {
+const AccountPage = () => {
   const { isDarkMode } = useDarkMode();
   return (
     <>
       <NavbarComponent />
       <div
         className={`${
-          isDarkMode ? "bg-[#140c00]" : "bg-[#f4f6f9]"
-        } flex h-full p-6 pt-28 sm:pt-32 items-center justify-center`}
+          isDarkMode
+            ? "bg-[#140c00] text-[#f0f0f0]"
+            : "bg-[#f4f6f9] text-[#353535]"
+        } p-6 pt-24 w-full flex items-center justify-center`}
       >
         <div
           className={`${
@@ -31,15 +32,15 @@ const AuthPage: React.FC = () => {
                   isDarkMode ? "text-[#f0f0f0]" : "text-[#353535]"
                 } inline-block`}
               >
-                Login K-Smart
+                Edit Profil K-Smart
               </span>
             </Link>
           </div>
-          <AuthForm />
+          <ProfileForm />
         </div>
       </div>
     </>
   );
 };
 
-export default AuthPage;
+export default AccountPage;
