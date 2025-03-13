@@ -25,6 +25,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminRoute from "./components/AdminRoute";
 import { UserProvider } from "./context/UserContext";
+import { CartProvider } from "./context/CartContext";
 // import AllProducts from "./pages/AllProducts";
 
 declare global {
@@ -66,74 +67,76 @@ function App() {
   return (
     <>
       <UserProvider>
-        <VoucherProvider>
-          <ProductProvider>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
+        <CartProvider>
+          <VoucherProvider>
+            <ProductProvider>
+              <Routes>
+                <Route path="/" element={<HomePage />} />
 
-              <Route path="/best-sellers" element={<BestSellersPage />} />
+                <Route path="/best-sellers" element={<BestSellersPage />} />
 
-              <Route path="/all-product" element={<AllProduct />} />
+                <Route path="/all-product" element={<AllProduct />} />
 
-              <Route path="/category/:category" element={<CategoryPage />} />
+                <Route path="/category/:category" element={<CategoryPage />} />
 
-              <Route path="/login" element={<AuthPage />} />
+                <Route path="/login" element={<AuthPage />} />
 
-              <Route path="/about-us" element={<AboutUsPage />} />
+                <Route path="/about-us" element={<AboutUsPage />} />
 
-              <Route path="/cart" element={<CartPage />} />
+                <Route path="/cart" element={<CartPage />} />
 
-              <Route path="/checkout" element={<CheckoutPage />} />
+                <Route path="/checkout" element={<CheckoutPage />} />
 
-              <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/profile" element={<ProfilePage />} />
 
-              <Route path="/akun" element={<AccountPage />} />
+                <Route path="/akun" element={<AccountPage />} />
 
-              <Route path="/my-order" element={<MyOrderPage />} />
+                <Route path="/my-order" element={<MyOrderPage />} />
 
-              <Route path="/voucher" element={<VoucherPage />} />
+                <Route path="/voucher" element={<VoucherPage />} />
 
-              {/* Rute dashboard yang hanya bisa diakses admin */}
-              <Route
-                path="/dashboard"
-                element={
-                  <AdminRoute>
-                    <AdminDashboard />
-                  </AdminRoute>
-                }
-              />
+                {/* Rute dashboard yang hanya bisa diakses admin */}
+                <Route
+                  path="/dashboard"
+                  element={
+                    <AdminRoute>
+                      <AdminDashboard />
+                    </AdminRoute>
+                  }
+                />
 
-              <Route
-                path="/history-BV"
-                element={
-                  <ProtectedRoute>
-                    <HistoryBvPage />
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/history-BV"
+                  element={
+                    <ProtectedRoute>
+                      <HistoryBvPage />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/payment-callback"
-                element={<PaymentCallbackPage />}
-              />
+                <Route
+                  path="/payment-callback"
+                  element={<PaymentCallbackPage />}
+                />
 
-              {/* Dynamic Route */}
-              <Route
-                path="/product/:productSlug"
-                element={<ProductDetailPage />}
-              />
+                {/* Dynamic Route */}
+                <Route
+                  path="/product/:productSlug"
+                  element={<ProductDetailPage />}
+                />
 
-              {/* Dynamic Route */}
-              <Route
-                path="/voucher/:voucherSlug"
-                element={<VoucherDetailPage />}
-              />
+                {/* Dynamic Route */}
+                <Route
+                  path="/voucher/:voucherSlug"
+                  element={<VoucherDetailPage />}
+                />
 
-              {/* Fungsi untuk not found jika tidak ada routes */}
-              <Route path="*" element={<NotFoundPage />} />
-            </Routes>
-          </ProductProvider>
-        </VoucherProvider>
+                {/* Fungsi untuk not found jika tidak ada routes */}
+                <Route path="*" element={<NotFoundPage />} />
+              </Routes>
+            </ProductProvider>
+          </VoucherProvider>
+        </CartProvider>
       </UserProvider>
     </>
   );

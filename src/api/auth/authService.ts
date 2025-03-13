@@ -50,8 +50,6 @@ export const loginUser = async (email: string, password: string) => {
       email: userCredential.user.email,
     };
 
-    localStorage.setItem("user", JSON.stringify(safeUser));
-
     // Simpan token sementara di sessionStorage (jangan di localStorage)
     sessionStorage.setItem(
       "accessToken",

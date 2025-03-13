@@ -8,11 +8,13 @@ import {
 import { auth, db } from "../config/Firebase";
 import { doc, onSnapshot } from "firebase/firestore";
 
-// Definisikan tipe untuk context
 interface User {
   uid: string;
   email: string | null;
-  role?: string; // Pakai `?` agar opsional
+  name?: string;
+  alamat?: string;
+  no_hp?: string;
+  role?: string;
 }
 
 interface UserContextType {
@@ -34,25 +36,31 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       if (authUser) {
         const userRef = doc(db, "users", authUser.uid);
 
-        // 🔥 Gunakan onSnapshot untuk pemantauan real-time
+        // Listener Firestore
         const unsubscribeFirestore = onSnapshot(userRef, (docSnap) => {
           if (docSnap.exists()) {
+            const userData = docSnap.data();
             setUser({
               uid: authUser.uid,
               email: authUser.email || "",
-              role: docSnap.data().role,
+              name: userData.name || "",
+              alamat: userData.alamat || "",
+              no_hp: userData.no_hp || "",
+              role: userData.role || "",
             });
           } else {
             setUser(null);
           }
         });
 
+        // Pastikan Firestore listener berhenti saat user logout
         return () => unsubscribeFirestore();
       } else {
         setUser(null);
       }
     });
 
+    // Hapus listener auth ketika komponen unmount
     return () => unsubscribeAuth();
   }, []);
 

@@ -46,8 +46,6 @@ const CardProduct = (props: CardProductProps) => {
 
   const productSlug = name?.toLowerCase().replace(/\s+/g, "-");
 
-  // const isLoggedIn = localStorage.getItem("user");
-
   const handleClick = () => {
       navigate(`/product/${id}-${productSlug}`, {
         state: {

@@ -5,7 +5,7 @@ import {
   useEffect,
   ReactNode,
 } from "react";
-import { db } from "../config/Firebase";
+import { auth, db } from "../config/Firebase";
 import {
   collection,
   doc,
@@ -13,6 +13,7 @@ import {
   getDocs,
   deleteDoc,
 } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 
 interface Product {
   id: number;
@@ -28,7 +29,6 @@ interface CartContextType {
   addToCart: (product: Product) => void;
   removeFromCart: (id: number) => void;
   setCart: React.Dispatch<React.SetStateAction<Product[]>>;
-  setUserEmail: (email: string | null) => void;
   clearCheckedOutItems: (selectedProducts: Product[]) => void;
   clearCart: () => void;
   loading: boolean;
@@ -39,34 +39,24 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cart, setCart] = useState<Product[]>([]);
   const [userEmail, setUserEmail] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false); // Tambahkan state loading
+  const [loading, setLoading] = useState(false);
 
-  const clearCart = () => {
-    setCart([]); // Kosongkan state cart
-    if (userEmail) {
-      localStorage.removeItem(`cart_${userEmail}`); // Hapus key dari localStorage
-    }
-  };
-
-  const getUserEmail = () => {
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
-    return user?.email || null;
-  };
-
+  // Mendapatkan email user dari Firebase Authentication
   useEffect(() => {
-    const email = getUserEmail();
-    setUserEmail(email);
-    if (email) {
-      loadCart(email); // Muat cart saat email tersedia
-    }
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user?.email) {
+        setUserEmail(user.email);
+        loadCart(user.email);
+      } else {
+        setUserEmail(null);
+        setCart([]); // Kosongkan cart saat user logout
+      }
+    });
+
+    return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
-    if (userEmail) {
-      loadCart(userEmail);
-    }
-  }, [userEmail]); // Jalankan loadCart saat userEmail berubah
-
+  // Simpan cart ke Firestore dan localStorage saat ada perubahan
   useEffect(() => {
     if (userEmail) {
       saveCartToLocalStorage(userEmail, cart);
@@ -87,7 +77,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     const cartRef = collection(db, "cart", email, "items");
 
     try {
-      // Jangan hapus item di Firestore jika tidak ada di localStorage
       for (const product of cartData) {
         await setDoc(doc(cartRef, String(product.id)), product);
       }
@@ -110,26 +99,19 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     return cartData;
   };
 
-  const loadCart = async (email: string | null) => {
+  const loadCart = async (email: string) => {
     if (!email) return;
 
-    setLoading(true); // Set loading ke true
-
+    setLoading(true);
     const savedCart = localStorage.getItem(`cart_${email}`);
-    if (
-      savedCart &&
-      savedCart !== "[]" &&
-      savedCart !== "null" &&
-      savedCart !== "undefined"
-    ) {
-      // Jika ada dan valid, gunakan data dari localStorage
+
+    if (savedCart && savedCart !== "[]" && savedCart !== "null") {
       setCart(JSON.parse(savedCart));
     } else {
-      // Jika tidak ada atau tidak valid, ambil data dari Firestore
       try {
         const fetchedCart = await fetchCartFromFirestore(email);
-        setCart(fetchedCart); // Set data ke state cart
-        saveCartToLocalStorage(email, fetchedCart); // Simpan ke localStorage
+        setCart(fetchedCart);
+        saveCartToLocalStorage(email, fetchedCart);
       } catch (error) {
         console.error("Gagal memuat cart dari Firestore:", error);
       }
@@ -192,6 +174,13 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const clearCart = () => {
+    setCart([]);
+    if (userEmail) {
+      localStorage.removeItem(`cart_${userEmail}`);
+    }
+  };
+
   return (
     <CartContext.Provider
       value={{
@@ -199,7 +188,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         addToCart,
         removeFromCart,
         setCart,
-        setUserEmail,
         clearCheckedOutItems,
         clearCart,
         loading,

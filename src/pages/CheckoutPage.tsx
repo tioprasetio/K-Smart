@@ -4,12 +4,11 @@ import { formatRupiah } from "../utils/formatCurrency";
 import Btn from "../components/Btn";
 import { useNavigate } from "react-router";
 import { useDarkMode } from "../context/DarkMode";
-import { auth, db } from "../config/Firebase";
-import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { onAuthStateChanged } from "firebase/auth";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import axios from "axios";
+import { useUser } from "../context/UserContext"; // Impor useUser
+import { db } from "../config/Firebase"; // Impor db dari Firebase config
 
 interface ShippingMethod {
   name: string;
@@ -20,9 +19,6 @@ const CheckoutPage = () => {
   const { selectedProducts, setSelectedProducts } = useCheckout();
   const navigate = useNavigate();
   const { isDarkMode } = useDarkMode();
-  const [name, setName] = useState("");
-  const [alamat, setAlamat] = useState("");
-  const [no_hp, setNoHp] = useState("");
   const [loading, setLoading] = useState(true);
 
   const [voucherCode, setVoucherCode] = useState("");
@@ -33,11 +29,19 @@ const CheckoutPage = () => {
     null
   );
 
+  const { user } = useUser(); // Ambil data user dari UserContext
+  const userId = user?.uid; // UID user dari UserContext
+  const userName = user?.name || ""; // Nama user dari UserContext
+  const userAlamat = user?.alamat || ""; // Alamat user dari UserContext
+  const userNoHp = user?.no_hp || ""; // Nomor HP user dari UserContext
+  const userEmail = user?.email || ""; // Email user dari UserContext
+
+  // Redirect ke cart jika tidak ada produk yang dipilih
   if (selectedProducts.length === 0) {
     navigate("/cart");
   }
 
-  // Untuk voucher
+  // Fungsi untuk menerapkan voucher
   const handleApplyVoucher = async () => {
     if (!voucherCode) {
       Swal.fire("Error", "Masukkan kode voucher!", "error");
@@ -65,7 +69,7 @@ const CheckoutPage = () => {
     }
   };
 
-  // Untuk metode pengiriman
+  // Ambil metode pengiriman dari Firestore
   useEffect(() => {
     const fetchShippingMethods = async () => {
       try {
@@ -86,36 +90,14 @@ const CheckoutPage = () => {
     fetchShippingMethods();
   }, []);
 
-  // Untuk ambil data user dari localStorage
+  // Set loading false jika user sudah ada
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        try {
-          const userRef = doc(db, "users", user.uid);
-          const userSnap = await getDoc(userRef);
-
-          if (userSnap.exists()) {
-            const userData = userSnap.data();
-            setName(userData.name || "");
-            setAlamat(userData.alamat || "");
-            setNoHp(userData.no_hp || "");
-          }
-        } catch (error) {
-          console.error("Error mengambil data user:", error);
-        } finally {
-          setLoading(false); // Pastikan loading dihentikan
-        }
-      } else {
-        navigate("/login"); // Arahkan ke halaman login jika belum login
-      }
-    });
-
-    return () => unsubscribe(); // Bersihkan listener saat komponen di-unmount
-  }, [navigate]);
-
-  // Ambil data user dari localStorage
-  const userData = JSON.parse(localStorage.getItem("user") || "{}");
-  const userId = userData?.uid; // UID user dari localStorage
+    if (user) {
+      setLoading(false);
+    } else {
+      navigate("/login"); // Arahkan ke halaman login jika user tidak ada
+    }
+  }, [user, navigate]);
 
   // Hitung total harga
   const totalHarga =
@@ -126,11 +108,12 @@ const CheckoutPage = () => {
       (1 - discount / 100) +
     (selectedMethod?.price || 0);
 
-  // Untuk pilih metode pengiriman
+  // Fungsi untuk memilih metode pengiriman
   const handleSelectMethod = (method: ShippingMethod) => {
     setSelectedMethod(method);
   };
 
+  // Hitung total BV
   const totalBV = selectedProducts.reduce(
     (total, item) => total + item.bv * item.quantity,
     0
@@ -154,13 +137,7 @@ const CheckoutPage = () => {
 
     try {
       const orderId = `ORDER-${Date.now()}`;
-
       localStorage.setItem("order_id", orderId);
-
-      // Hitung total BV dengan lebih aman
-      const totalBV = selectedProducts.reduce((sum, product) => {
-        return sum + (product.bv || 0) * (product.quantity || 1);
-      }, 0);
 
       // Kirim data ke backend untuk membuat transaksi Midtrans
       const response = await axios.post(
@@ -170,11 +147,11 @@ const CheckoutPage = () => {
           gross_amount: totalHarga,
           uid: userId,
           products: selectedProducts,
-          totalBV, // Tambahkan total BV ke payload
+          totalBV, // Total BV
           customer_details: {
-            first_name: name,
-            email: userData.email,
-            phone: userData.phone || "",
+            first_name: userName, // Nama dari UserContext
+            email: userEmail, // Email dari UserContext
+            phone: userNoHp || "", // Nomor HP dari UserContext
           },
         }
       );
@@ -191,7 +168,7 @@ const CheckoutPage = () => {
     }
   };
 
-  // Hapus checkout dari state & localStorage
+  // Fungsi untuk membatalkan checkout
   const handleCancelCheckout = () => {
     Swal.fire({
       title: "Batalkan Checkout?",
@@ -244,6 +221,7 @@ const CheckoutPage = () => {
     };
   }, [navigate, setSelectedProducts]);
 
+  // Tampilkan loading jika data belum siap
   if (loading) {
     return (
       <div
@@ -254,7 +232,6 @@ const CheckoutPage = () => {
         <p className={`${isDarkMode ? "text-[#f0f0f0]" : "text-[#353535]"}`}>
           Memuat data...
         </p>
-        {/* Tambahkan spinner atau skeleton loader di sini */}
       </div>
     );
   }
@@ -270,6 +247,7 @@ const CheckoutPage = () => {
       >
         <h1 className="text-2xl font-bold mb-4">Checkout</h1>
 
+        {/* Informasi Pengguna */}
         <div
           className={`${
             isDarkMode
@@ -277,14 +255,13 @@ const CheckoutPage = () => {
               : "bg-[#FFFFFF] text-[#353535]"
           } p-4 rounded-lg`}
         >
-          {/* Bagian atas: Nama dan Nomor HP */}
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-lg font-bold">{name}</h2>
-              <p className="text-sm">({no_hp})</p>
+              <h2 className="text-lg font-bold">{userName}</h2>
+              <p className="text-sm">({userNoHp})</p>
             </div>
             <button
-              onClick={() => navigate("/profile")} // Arahkan ke halaman edit alamat
+              onClick={() => navigate("/profile")}
               className={`py-2 px-4 rounded cursor-pointer text-3xl items-center justify-center ${
                 isDarkMode ? "text-[#f0f0f0]" : "text-[#959595]"
               }`}
@@ -292,13 +269,12 @@ const CheckoutPage = () => {
               <i className="bx bx-right-arrow-circle"></i>
             </button>
           </div>
-
-          {/* Bagian bawah: Alamat */}
           <div className="space-y-2">
-            <p className="text-sm">{alamat}</p>
+            <p className="text-sm">{userAlamat}</p>
           </div>
         </div>
 
+        {/* Daftar Produk */}
         {selectedProducts.length === 0 ? (
           <p>Tidak ada produk yang dipilih.</p>
         ) : (
@@ -325,6 +301,7 @@ const CheckoutPage = () => {
           ))
         )}
 
+        {/* Voucher dan Metode Pengiriman */}
         <div
           className={`${
             isDarkMode
@@ -376,26 +353,9 @@ const CheckoutPage = () => {
               ))}
             </select>
           </div>
-          <div
-            className={`${
-              isDarkMode
-                ? "bg-[#e1ffec] text-[#353535] border-1 border-[#28a154]"
-                : "bg-[#e1ffec] text-[#353535] border-1 border-[#28a154]"
-            } p-4 rounded-lg flex flex-col gap-2`}
-          >
-            {/* Bagian atas: Judul dan Harga */}
-            <div className="flex justify-between items-center text-sm">
-              <p className="font-bold">{selectedMethod?.name}</p>
-              <div className="flex items-center gap-2">
-                <p className="font-medium">
-                  {formatRupiah(selectedMethod?.price || 0)}
-                </p>
-                <i className="bx bx-checkbox-checked text-2xl"></i>
-              </div>
-            </div>
-          </div>
         </div>
 
+        {/* Rincian Pembayaran */}
         <div
           className={`${
             isDarkMode
@@ -403,7 +363,6 @@ const CheckoutPage = () => {
               : "bg-[#FFFFFF] text-[#353535]"
           } p-4 rounded-lg flex mt-4 flex-col gap-2`}
         >
-          Rincian Pembayaran
           <div className="flex justify-between">
             <p className="font-medium">Total BV didapat</p>
             <p className="font-medium">{totalBV}</p>
@@ -430,7 +389,7 @@ const CheckoutPage = () => {
         </div>
       </div>
 
-      {/* Tombol Bayar & Batal di Bawah */}
+      {/* Tombol Bayar & Batal */}
       <div
         className={`${
           isDarkMode
@@ -438,12 +397,9 @@ const CheckoutPage = () => {
             : "bg-[#FFFFFF] text-[#353535]"
         } fixed bottom-0 left-0 w-full p-4 shadow-xl flex flex-col gap-2`}
       >
-        {/* Total Harga */}
         <h2 className="text-lg font-semibold">
           Total: {formatRupiah(totalHarga)}
         </h2>
-
-        {/* Tombol Batal & Bayar */}
         <div className="flex gap-2">
           <Btn
             onClick={handleCancelCheckout}

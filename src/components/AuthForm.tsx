@@ -117,9 +117,6 @@ const AuthForm = () => {
           role: "user", // Pastikan ada role, default ke "user"
         };
         // Pastikan user dan user.email ada
-
-        // Simpan ke localStorage & pindah ke halaman utama
-        localStorage.setItem("user", JSON.stringify(user));
         setUser(userData); // Set email ke context
         navigate("/");
       }

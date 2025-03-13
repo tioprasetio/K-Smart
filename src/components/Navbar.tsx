@@ -1,23 +1,18 @@
 import "flowbite/dist/flowbite.min.js";
 import { Link } from "react-router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import "flowbite";
 import { useDarkMode } from "../context/DarkMode";
 import { useCart } from "../context/CartContext";
 import { logoutUser } from "../api/auth/authService";
 import Swal from "sweetalert2";
+import { useUser } from "../context/UserContext";
 
 const NavbarComponent = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { user, setUser } = useUser();
   const { cart, clearCart } = useCart();
 
   const { isDarkMode, setIsDarkMode } = useDarkMode();
-
-  // Cek apakah user sudah login (ada data di localStorage)
-  useEffect(() => {
-    const user = localStorage.getItem("user");
-    setIsLoggedIn(!!user); // Jika ada user, set isLoggedIn = true
-  }, []);
 
   // Fungsi Logout
   const handleLogout = async () => {
@@ -36,7 +31,7 @@ const NavbarComponent = () => {
       try {
         await logoutUser(); // Panggil fungsi logout dari authService
         clearCart(); // Kosongkan state cart
-        setIsLoggedIn(false);
+        setUser(null);
         window.location.assign("/login"); // Redirect ke halaman login
       } catch (error) {
         console.error("Logout error:", error);
@@ -100,7 +95,7 @@ const NavbarComponent = () => {
           </Link>
 
           {/* Profile Button */}
-          {isLoggedIn && (
+          {user && (
             <Link
               to="/profile"
               className={`${
@@ -211,7 +206,7 @@ const NavbarComponent = () => {
               </Link>
             </li>
 
-            {isLoggedIn && (
+            {user && (
               <li>
                 <Link
                   to="/profile"
@@ -244,7 +239,7 @@ const NavbarComponent = () => {
             </li>
 
             <li className="w-full md:w-auto">
-              {isLoggedIn ? (
+              {user ? (
                 <button
                   onClick={handleLogout}
                   className={`${

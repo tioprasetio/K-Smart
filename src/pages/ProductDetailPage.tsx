@@ -9,10 +9,11 @@ import { formatRupiah } from "../utils/formatCurrency";
 import { useCart } from "../context/CartContext";
 import Swal from "sweetalert2";
 import { useCheckout } from "../context/CheckoutContext";
+import { useUser } from "../context/UserContext";
 
 const ProductDetailPage = () => {
   // const params = useParams<{ productSlug: string }>();
-  const isLoggedIn = localStorage.getItem("user");
+  const { user } = useUser();
   const { isDarkMode } = useDarkMode();
   const location = useLocation();
   const { addToCart } = useCart();
@@ -38,7 +39,7 @@ const ProductDetailPage = () => {
 
   // Fungsi untuk menambahkan produk ke keranjang
   const handleAddToCart = () => {
-    if (!isLoggedIn) {
+    if (!user) {
       Swal.fire({
         title: "Oops...",
         text: "Anda harus login terlebih dahulu!",
@@ -69,7 +70,7 @@ const ProductDetailPage = () => {
   };
 
   const handleBuyNow = () => {
-    if (!isLoggedIn) {
+    if (!user) {
       Swal.fire({
         title: "Oops...",
         text: "Anda harus login terlebih dahulu!",
