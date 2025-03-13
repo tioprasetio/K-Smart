@@ -14,7 +14,6 @@ import CheckoutPage from "./pages/CheckoutPage";
 import AuthPage from "./pages/AuthPage";
 import ProfilePage from "./pages/ProfilePage";
 import MyOrderPage from "./pages/MyOrderPage";
-import PaymentRedirectHandler from "./pages/PaymentRedirectHandler";
 import PaymentCallbackPage from "./pages/PaymentCallbackPage";
 import AccountPage from "./pages/AccountPage";
 import VoucherPage from "./pages/VoucherPage";
@@ -111,11 +110,6 @@ function App() {
                     <HistoryBvPage />
                   </ProtectedRoute>
                 }
-              />
-
-              <Route
-                path="/payment-redirect"
-                element={<PaymentRedirectHandler />}
               />
 
               <Route

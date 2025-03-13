@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
 import { useCart } from "../context/CartContext";
 import { useCheckout } from "../context/CheckoutContext";
 import { formatRupiah } from "../utils/formatCurrency";
 import { useDarkMode } from "../context/DarkMode";
+import { useEffect, useState } from "react";
 
 const PaymentCallback = () => {
   const [statusMessage, setStatusMessage] = useState("Menunggu verifikasi...");
