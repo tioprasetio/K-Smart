@@ -21,11 +21,14 @@ import { VoucherProvider } from "./context/VoucherContext";
 import VoucherDetailPage from "./pages/VoucherDetailPage";
 import { useDarkMode } from "./context/DarkMode";
 import HistoryBvPage from "./pages/HistoryBvPage";
-import ProtectedRoute from "./components/ProtectedRoute";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminRoute from "./components/AdminRoute";
 import { UserProvider } from "./context/UserContext";
 import { CartProvider } from "./context/CartContext";
+import PrivateRoute from "./components/PrivateRoute";
+import ContentDashboard from "./components/ContentDashboard";
+import TransactionDashboard from "./pages/TransactionDashboard";
+import ProductDashboard from "./pages/ProductDashboard";
 // import AllProducts from "./pages/AllProducts";
 
 declare global {
@@ -87,32 +90,48 @@ function App() {
 
                 <Route path="/checkout" element={<CheckoutPage />} />
 
-                <Route path="/profile" element={<ProfilePage />} />
+                <Route element={<PrivateRoute />}>
+                  <Route path="/profile" element={<ProfilePage />} />
+                </Route>
 
-                <Route path="/akun" element={<AccountPage />} />
+                <Route element={<PrivateRoute />}>
+                  <Route path="/akun" element={<AccountPage />} />
+                </Route>
 
-                <Route path="/my-order" element={<MyOrderPage />} />
+                <Route element={<PrivateRoute />}>
+                  <Route path="/my-order" element={<MyOrderPage />} />
+                </Route>
 
                 <Route path="/voucher" element={<VoucherPage />} />
 
                 {/* Rute dashboard yang hanya bisa diakses admin */}
-                <Route
-                  path="/dashboard"
-                  element={
-                    <AdminRoute>
-                      <AdminDashboard />
-                    </AdminRoute>
-                  }
-                />
+                <Route element={<PrivateRoute />}>
+                  {/* Dashboard Admin */}
+                  <Route
+                    path="/dashboard"
+                    element={
+                      <AdminRoute>
+                        <AdminDashboard />
+                      </AdminRoute>
+                    }
+                  >
+                    <Route index element={<ContentDashboard />} />{" "}
+                    {/* Default route untuk /dashboard */}
+                    <Route
+                      path="transaction"
+                      element={<TransactionDashboard />}
+                    />{" "}
+                    <Route
+                      path="product"
+                      element={<ProductDashboard />}
+                    />{" "}
+                    {/* /dashboard/transaction */}
+                  </Route>
+                </Route>
 
-                <Route
-                  path="/history-BV"
-                  element={
-                    <ProtectedRoute>
-                      <HistoryBvPage />
-                    </ProtectedRoute>
-                  }
-                />
+                <Route element={<PrivateRoute />}>
+                  <Route path="/history-BV" element={<HistoryBvPage />} />
+                </Route>
 
                 <Route
                   path="/payment-callback"

@@ -141,7 +141,7 @@ const CheckoutPage = () => {
 
       // Kirim data ke backend untuk membuat transaksi Midtrans
       const response = await axios.post(
-        "https://4577-202-57-1-106.ngrok-free.app/api/payment/create-transaction",
+        "https://8707-202-57-1-106.ngrok-free.app/api/payment/create-transaction",
         {
           order_id: orderId,
           gross_amount: totalHarga,

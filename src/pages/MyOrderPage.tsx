@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { collection, query, where, getDocs } from "firebase/firestore";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth, db } from "../config/Firebase";
+import { db } from "../config/Firebase";
 import { useDarkMode } from "../context/DarkMode";
 import NavbarComponent from "../components/Navbar";
 import { formatRupiah } from "../utils/formatCurrency";
 import { useNavigate } from "react-router";
+import { useUser } from "../context/UserContext";
 
 // isi detail product
 interface OrderItem {
@@ -28,20 +28,18 @@ const MyOrderPage = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const { isDarkMode } = useDarkMode();
+  const { user, isAuthChecked } = useUser(); // Ambil user dari context
   const navigate = useNavigate();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        fetchOrders(user.uid);
-      } else {
-        setOrders([]);
-        setLoading(false);
-      }
-    });
+    if (!isAuthChecked) return; // Tunggu autentikasi selesai
+    if (!user) {
+      navigate("/login"); // Redirect ke login jika belum login
+      return;
+    }
 
-    return () => unsubscribe();
-  }, []);
+    fetchOrders(user.uid);
+  }, [user, isAuthChecked, navigate]);
 
   const fetchOrders = async (uid: string) => {
     try {
@@ -95,9 +93,7 @@ const MyOrderPage = () => {
             className="bx bx-arrow-back text-xl md:text-2xl cursor-pointer"
             onClick={() => navigate(-1)} // Tambahkan fungsi kembali
           ></i>
-          <h1 className="text-2xl font-bold">
-            Pesanan Saya
-          </h1>
+          <h1 className="text-2xl font-bold">Pesanan Saya</h1>
         </div>
         {orders.length === 0 ? (
           <p>Tidak ada pesanan.</p>

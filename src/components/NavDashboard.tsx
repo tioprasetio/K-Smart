@@ -1,7 +1,13 @@
 import { useDarkMode } from "../context/DarkMode";
+import { useUser } from "../context/UserContext";
 
 const NavDashboard = () => {
   const { isDarkMode, setIsDarkMode } = useDarkMode();
+
+  const { user } = useUser(); // Ambil data user dari UserContext
+  const userName = user?.name ?? "Tidak tersedia"; // Nama user dari UserContext
+  const userEmail = user?.email ?? "Tidak tersedia"; // Email user dari UserContext
+
   return (
     <nav
       className={`${
@@ -33,16 +39,17 @@ const NavDashboard = () => {
                 ></path>
               </svg>
             </button>
-            <a
-              href="/"
-              className="flex ms-2 md:me-24 items-center"
-            >
+            <a href="/" className="flex ms-2 md:me-24 items-center">
               <img
                 src="https://k-net.co.id/assets/images/logo.png"
                 className="h-8 me-3"
                 alt="FlowBite Logo"
               />
-              <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
+              <span
+                className={`${
+                  isDarkMode ? "text-[#f0f0f0]" : "text-[#353535]"
+                } self-center text-xl font-semibold sm:text-2xl whitespace-nowrap`}
+              >
                 K-Smart
               </span>
             </a>
@@ -53,7 +60,7 @@ const NavDashboard = () => {
                 onClick={() => setIsDarkMode(!isDarkMode)}
                 className={`${
                   isDarkMode
-                    ? "text-[#f0f0f0] bg-[#303030]"
+                    ? "text-[#f0f0f0] bg-[#404040]"
                     : "text-[#353535] bg-[#f0f0f0]"
                 } cursor-pointer block py-2 px-3 text-center hover:text-white w-full md:w-auto hover:bg-[#28a154] rounded-sm`}
               >
@@ -84,29 +91,37 @@ const NavDashboard = () => {
                 className={`${
                   isDarkMode
                     ? "bg-[#202020] divide-gray-600"
-                    : "bg-[#FFFFFF] divide-gray-100"
+                    : "bg-[#FFFFFF] divide-gray-100 text-[#353535]"
                 } z-50 hidden my-4 text-base list-none divide-y rounded-sm shadow-sm`}
                 id="dropdown-user"
               >
                 <div className="px-4 py-3" role="none">
                   <p
-                    className="text-sm text-gray-900 dark:text-white"
+                    className={`${
+                      isDarkMode ? "text-[#f0f0f0]" : "text-[#353535]"
+                    } text-sm`}
                     role="none"
                   >
-                    Neil Sims
+                    {userName}
                   </p>
                   <p
-                    className="text-sm font-medium text-gray-900 truncate dark:text-gray-300"
+                    className={`${
+                      isDarkMode ? "text-[#f0f0f0]" : "text-[#353535]"
+                    } text-sm truncate font-medium`}
                     role="none"
                   >
-                    neil.sims@flowbite.com
+                    {userEmail}
                   </p>
                 </div>
                 <ul className="py-1" role="none">
                   <li>
                     <a
                       href="#"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                      className={`${
+                        isDarkMode
+                          ? "text-[#f0f0f0] hover:bg-gray-600"
+                          : "text-[#353535] hover:bg-gray-600 hover:text-white"
+                      } text-sm block px-4 py-2`}
                       role="menuitem"
                     >
                       Dashboard
@@ -115,7 +130,11 @@ const NavDashboard = () => {
                   <li>
                     <a
                       href="#"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                      className={`${
+                        isDarkMode
+                          ? "text-[#f0f0f0] hover:bg-gray-600"
+                          : "text-[#353535] hover:bg-gray-600 hover:text-white"
+                      } text-sm block px-4 py-2`}
                       role="menuitem"
                     >
                       Settings
@@ -124,7 +143,11 @@ const NavDashboard = () => {
                   <li>
                     <a
                       href="#"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                      className={`${
+                        isDarkMode
+                          ? "text-[#f0f0f0] hover:bg-gray-600"
+                          : "text-[#353535] hover:bg-gray-600 hover:text-white"
+                      } text-sm block px-4 py-2`}
                       role="menuitem"
                     >
                       Earnings
@@ -133,7 +156,11 @@ const NavDashboard = () => {
                   <li>
                     <a
                       href="#"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                      className={`${
+                        isDarkMode
+                          ? "text-[#f0f0f0] hover:bg-gray-600"
+                          : "text-[#353535] hover:bg-gray-600 hover:text-white"
+                      } text-sm block px-4 py-2`}
                       role="menuitem"
                     >
                       Sign out

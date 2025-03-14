@@ -15,10 +15,14 @@ interface User {
   alamat?: string;
   no_hp?: string;
   role?: string;
+  BV?: number;
+  jenis_kelamin?: string;
+  tanggal_lahir?: string;
 }
 
 interface UserContextType {
   user: User | null;
+  isAuthChecked: boolean; // Menandakan apakah auth sudah dicek
   setUser: (user: User | null) => void;
 }
 
@@ -30,6 +34,7 @@ interface UserProviderProps {
 
 export const UserProvider = ({ children }: UserProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
+  const [isAuthChecked, setIsAuthChecked] = useState(false); // Default: false
 
   useEffect(() => {
     const unsubscribeAuth = auth.onAuthStateChanged(async (authUser) => {
@@ -42,30 +47,35 @@ export const UserProvider = ({ children }: UserProviderProps) => {
             const userData = docSnap.data();
             setUser({
               uid: authUser.uid,
-              email: authUser.email || "",
-              name: userData.name || "",
-              alamat: userData.alamat || "",
-              no_hp: userData.no_hp || "",
-              role: userData.role || "",
+              email: authUser.email || null,
+              name: userData.name ?? undefined,
+              alamat: userData.alamat ?? undefined,
+              no_hp: userData.no_hp ?? undefined,
+              role: userData.role ?? undefined,
+              BV: userData.BV ?? 0, // Pastikan default adalah angka
+              jenis_kelamin: userData.jenis_kelamin ?? undefined,
+              tanggal_lahir: userData.tanggal_lahir ?? undefined,
             });
           } else {
             setUser(null);
           }
+          setIsAuthChecked(true);
         });
 
-        // Pastikan Firestore listener berhenti saat user logout
+        // Cleanup listener Firestore saat user logout
         return () => unsubscribeFirestore();
       } else {
         setUser(null);
+        setIsAuthChecked(true);
       }
     });
 
-    // Hapus listener auth ketika komponen unmount
+    // Cleanup listener Auth saat komponen unmount
     return () => unsubscribeAuth();
   }, []);
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user, isAuthChecked, setUser }}>
       {children}
     </UserContext.Provider>
   );

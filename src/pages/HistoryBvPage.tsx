@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-import { auth, db } from "../config/Firebase"; // Pastikan Firebase dikonfigurasi dengan benar
-import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
+import { db } from "../config/Firebase";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
+  getDoc,
+} from "firebase/firestore";
 import { useNavigate } from "react-router";
 import { useDarkMode } from "../context/DarkMode";
 import NavbarComponent from "../components/Navbar";
-import { onAuthStateChanged } from "firebase/auth";
+import { useUser } from "../context/UserContext";
 
 interface BVHistory {
   id: string;
@@ -21,47 +28,44 @@ const HistoryBvPage: React.FC = () => {
   const navigate = useNavigate();
   const { isDarkMode } = useDarkMode();
   const [BV, setBV] = useState("");
+  const { user, isAuthChecked } = useUser();
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [currentUser, setCurrentUser] = useState<any>(null); // Tambahkan state untuk menyimpan user
-
-  // Ambil data pengguna yang sedang login
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        setCurrentUser(user); // Simpan user ke state
-        const userRef = doc(db, "users", user.uid);
-        const userSnap = await getDoc(userRef);
+    if (!isAuthChecked) return;
+    if (!user) {
+      Swal.fire(
+        "Error",
+        "Anda harus login untuk melihat riwayat BV!",
+        "error"
+      ).then(() => {
+        navigate("/login");
+      });
+      return;
+    }
 
-        if (userSnap.exists()) {
-          setBV(userSnap.data().BV || "");
-        }
-        setLoading(false); // Data selesai diambil
-      } else {
-        Swal.fire(
-          "Error",
-          "Anda harus login untuk melihat riwayat BV!",
-          "error"
-        ).then(() => {
-          navigate("/login");
-        });
+    setLoading(true);
+    const fetchUserBV = async () => {
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()) {
+        setBV(userSnap.data().BV || "0");
       }
-    });
-
-    return () => unsubscribe(); // Bersihkan listener saat komponen di-unmount
-  }, [navigate]);
+      setLoading(false);
+    };
+    fetchUserBV();
+  }, [user, isAuthChecked, navigate]);
 
   useEffect(() => {
-    if (!currentUser) return;
-    const userId = currentUser.uid;
+    if (!user) return;
+    setLoading(true);
 
     const fetchBVHistory = async () => {
       try {
-        setLoading(true);
-
-        // Cari semua member yang memiliki leader_id = userId
         const usersRef = collection(db, "users");
-        const membersQuery = query(usersRef, where("leader_id", "==", userId));
+        const membersQuery = query(
+          usersRef,
+          where("leader_id", "==", user.uid)
+        );
         const membersSnapshot = await getDocs(membersQuery);
 
         const members = membersSnapshot.docs.map((doc) => ({
@@ -75,11 +79,10 @@ const HistoryBvPage: React.FC = () => {
           return;
         }
 
+        const transactionsRef = collection(db, "transactions");
         const historyData: BVHistory[] = [];
 
-        // Loop setiap member dan ambil transaksi mereka dari collection transactions
         for (const member of members) {
-          const transactionsRef = collection(db, "transactions");
           const transactionsQuery = query(
             transactionsRef,
             where("uid", "==", member.id),
@@ -89,13 +92,11 @@ const HistoryBvPage: React.FC = () => {
 
           transactionsSnapshot.forEach((doc) => {
             const transaction = doc.data();
-            const bvAmount = transaction.totalBV || 0;
-
             historyData.push({
               id: doc.id,
               memberName: member.name,
               memberEmail: member.email,
-              bvAmount: bvAmount,
+              bvAmount: transaction.totalBV || 0,
               timestamp: transaction.createdAt,
             });
           });
@@ -105,7 +106,6 @@ const HistoryBvPage: React.FC = () => {
           (a, b) =>
             new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
         );
-
         setHistory(historyData);
       } catch (error) {
         console.error("Error fetching BV history:", error);
@@ -115,7 +115,7 @@ const HistoryBvPage: React.FC = () => {
     };
 
     fetchBVHistory();
-  }, [currentUser]);
+  }, [user]);
 
   if (loading) {
     return (
@@ -140,7 +140,7 @@ const HistoryBvPage: React.FC = () => {
         <div className="flex items-center gap-2 mb-4">
           <i
             className="bx bx-arrow-back text-xl md:text-2xl cursor-pointer"
-            onClick={() => navigate(-1)} // Tambahkan fungsi kembali
+            onClick={() => navigate(-1)}
           ></i>
           <h1 className="text-2xl font-bold">History BV</h1>
         </div>
@@ -171,14 +171,14 @@ const HistoryBvPage: React.FC = () => {
               >
                 <div className="flex flex-row items-center gap-1">
                   <i className="bx bx-user"></i>
-                  <p className="font-semibold truncate max-w-[200px] sm:max-w-[300px] md:max-w-[400px] overflow-hidden text-ellipsis whitespace-nowrap">
+                  <p className="font-semibold truncate max-w-[300px] overflow-hidden text-ellipsis">
                     {item.memberName}
                   </p>
                 </div>
 
                 <div className="flex flex-row items-center gap-1">
                   <i className="bx bx-envelope"></i>
-                  <p className="font-semibold truncate max-w-[200px] sm:max-w-[300px] md:max-w-[400px] overflow-hidden text-ellipsis whitespace-nowrap">
+                  <p className="font-semibold truncate max-w-[300px] overflow-hidden text-ellipsis">
                     {item.memberEmail}
                   </p>
                 </div>
@@ -198,7 +198,12 @@ const HistoryBvPage: React.FC = () => {
                   } flex flex-row items-center gap-1`}
                 >
                   <i className="bx bx-calendar"></i>
-                  <p>{new Date(item.timestamp).toLocaleString()}</p>
+                  <p>
+                    {new Intl.DateTimeFormat("id-ID", {
+                      dateStyle: "long",
+                      timeStyle: "short",
+                    }).format(new Date(item.timestamp))}
+                  </p>
                 </div>
               </div>
             ))}

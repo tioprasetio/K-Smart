@@ -1,43 +1,21 @@
 import { Link, useNavigate } from "react-router-dom";
 import NavbarComponent from "../components/Navbar";
 import { useDarkMode } from "../context/DarkMode";
-import { useEffect, useState } from "react";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth, db } from "../config/Firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { useUser } from "../context/UserContext";
 
 const ProfilePage = () => {
   const { isDarkMode } = useDarkMode();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [BV, setBV] = useState("");
-  const [role, setRole] = useState("");
-  const [loading, setLoading] = useState(true);
+  const { user, isAuthChecked } = useUser();
   const navigate = useNavigate();
 
-  // Ambil data pengguna yang sedang login
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const userRef = doc(db, "users", user.uid);
-        const userSnap = await getDoc(userRef);
+  // Jika autentikasi sudah dicek dan user tidak login, langsung redirect
+  if (isAuthChecked && !user) {
+    navigate("/login");
+    return null;
+  }
 
-        if (userSnap.exists()) {
-          setName(userSnap.data().name || "");
-          setBV(userSnap.data().BV || "");
-          setEmail(userSnap.data().email || "");
-          setRole(userSnap.data().role || ""); // Ambil role pengguna dari Firestore
-        }
-        setLoading(false); // Data selesai diambil
-      } else {
-        navigate("/login"); // Arahkan ke halaman login jika belum login
-      }
-    });
-
-    return () => unsubscribe(); // Bersihkan listener saat komponen di-unmount
-  }, [navigate]);
-
-  if (loading) {
+  // Tampilkan loading hanya jika autentikasi belum dicek
+  if (!isAuthChecked) {
     return (
       <div
         className={`${
@@ -66,7 +44,7 @@ const ProfilePage = () => {
             className={`${
               isDarkMode ? "text-[#f0f0f0]" : "text-[#353535]"
             } bx bx-arrow-back text-xl md:text-2xl cursor-pointer`}
-            onClick={() => navigate(-1)} // Tambahkan fungsi kembali
+            onClick={() => navigate(-1)}
           ></i>
           <h1
             className={`${
@@ -88,19 +66,19 @@ const ProfilePage = () => {
             <div className="flex flex-row items-center gap-1">
               <i className="bx bx-user"></i>
               <h1 className="truncate max-w-[200px] sm:max-w-[300px] md:max-w-[400px] overflow-hidden text-ellipsis whitespace-nowrap">
-                {name}
+                {user?.name}
               </h1>
             </div>
 
             <div className="flex flex-row items-center gap-1">
               <i className="bx bx-coin-stack"></i>
-              <h1>{BV}</h1>
+              <h1>{user?.BV}</h1>
             </div>
 
             <div className="flex flex-row items-center gap-1">
               <i className="bx bx-envelope"></i>
               <h1 className="truncate max-w-[200px] sm:max-w-[300px] md:max-w-[400px] overflow-hidden text-ellipsis whitespace-nowrap">
-                {email}
+                {user?.email}
               </h1>
             </div>
           </div>
@@ -135,7 +113,7 @@ const ProfilePage = () => {
           </Link>
         </div>
 
-        {role === "admin" && (
+        {user?.role === "admin" && (
           <div
             className={`${
               isDarkMode
@@ -149,7 +127,6 @@ const ProfilePage = () => {
             </Link>
           </div>
         )}
-
       </div>
     </>
   );

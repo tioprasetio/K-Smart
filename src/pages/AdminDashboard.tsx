@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import ContentDashboard from "../components/ContentDashboard";
+import { useNavigate, Outlet } from "react-router-dom";
 import NavDashboard from "../components/NavDashboard";
 import SidebarDashboard from "../components/SidebarDashboard";
 import { initFlowbite } from "flowbite";
-import { getUserRole } from "../api/auth/authService"; // Pastikan ini benar
+import { getUserRole } from "../api/auth/authService";
 import { useDarkMode } from "../context/DarkMode";
 
 const AdminDashboard = () => {
@@ -41,7 +40,6 @@ const AdminDashboard = () => {
         <p className={`${isDarkMode ? "text-[#f0f0f0]" : "text-[#353535]"}`}>
           Memuat data...
         </p>
-        {/* Tambahkan spinner atau skeleton loader di sini */}
       </div>
     );
   }
@@ -50,8 +48,11 @@ const AdminDashboard = () => {
     <>
       <NavDashboard />
       <SidebarDashboard />
-      <ContentDashboard />
-      <SidebarDashboard />
+      <div className="p-4 sm:ml-64">
+        <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
+          <Outlet />
+        </div>
+      </div>
     </>
   );
 };
